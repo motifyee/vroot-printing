@@ -1,4 +1,6 @@
 
+using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -56,7 +58,7 @@ public class Invoice {//: IParsable<Invoice>
 
         foreach (KeyValuePair<string, string> prop in properties) {
             var value = GetValue(prop.Key);
-            if (value == null) continue;
+            if (value == null || value.Trim().Length == 0) continue;
 
             if (!multilineProperties.Contains(prop.Key)) {
                 entries.Add(new Entry() {
@@ -94,6 +96,13 @@ public class Invoice {//: IParsable<Invoice>
             };
 
             return GetPropertyListEntries(properties, new List<string> { "ClientAddress" });
+        }
+    }
+
+    public string? DeliveryName { get; set; }
+    public string? DeliveryNameTitle {
+        get {
+            return (DeliveryName != null && DeliveryName?.Length > 0) ? "طيار" : null;
         }
     }
 
@@ -152,14 +161,14 @@ public class Invoice {//: IParsable<Invoice>
     public string? ScheduleTime { get; set; }
     public string? ScheduleTitle {
         get {
-            return (ScheduleTime != null) ? "حجز" : null;
+            return (ScheduleTime != null && ScheduleTime?.Length > 0) ? "حجز" : null;
         }
     }
 
     public string? TableNo { get; set; }
     public string? TableTitle {
         get {
-            return (TableNo != null) ? "طاولة" : null;
+            return (TableNo != null && TableNo?.Length > 0) ? "طاولة" : null;
         }
     }
 
@@ -186,7 +195,9 @@ public class Invoice {//: IParsable<Invoice>
         }
     }
 
-
+    public string? note1 { get; set; }
+    public string? note2 { get; set; }
+    public string? note3 { get; set; }
 
 }
 
@@ -216,5 +227,4 @@ public class Item {
     public string? TotalPrice { get; set; }
     public string? Note { get; set; }
 }
-
 

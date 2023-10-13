@@ -36,11 +36,12 @@ public class PrintingDataController : ControllerBase {
             // TODO: clean up files after sending to printer
             // TODO: check if template && lib files exists
 
-            var result = SendXlsx2PrinterByInterop(outputPath, invoice.PrinterName);
+            //var result = SendXlsx2PrinterByInterop(outputPath, invoice.PrinterName);
+			return Ok();
 
-            if (result.Trim() == "")
-                return Ok();
-            return StatusCode(StatusCodes.Status500InternalServerError, result);
+            //if (result.Trim() == "")
+             //   return Ok();
+            //return StatusCode(StatusCodes.Status500InternalServerError, result);
 
         } catch (Exception e) {
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
@@ -78,8 +79,6 @@ public class PrintingDataController : ControllerBase {
         }
         return result;
     }
-
-
 
 
 }
