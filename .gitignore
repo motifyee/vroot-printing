@@ -1,3 +1,4 @@
 obj/
 bin/
 printer/out/*.xlsx
+!printer/templates/*.xlsx

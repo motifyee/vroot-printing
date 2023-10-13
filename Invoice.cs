@@ -64,6 +64,7 @@ public class Invoice {//: IParsable<Invoice>
                 entries.Add(new Entry() {
                     Title = prop.Value,
                     Value = value,
+                    Values = new List<string?> { value }
                 });
                 continue;
             }
@@ -75,6 +76,7 @@ public class Invoice {//: IParsable<Invoice>
                 entries.Add(new Entry() {
                     Title = i == 0 ? prop.Value : null,
                     Value = lines[i],
+                    Values = new List<string?> { lines[i] }
                 });
             }
 
@@ -114,13 +116,14 @@ public class Invoice {//: IParsable<Invoice>
 
             foreach (var item in Items) {
                 entries.Add(new Entry() {
-                    Title = item.Title,
-                    Value = item.Count,
+                    Title = item?.Title,
+                    Value = item?.Count,
+                    Values = new List<string?> { item?.Count }
                 });
-                if (item.Note != null && item.Note?.Trim().Length > 0) {
-                    Console.WriteLine(item.Title);
+                if (item?.Note != null && item?.Note?.Trim().Length > 0) {
+                    Console.WriteLine(item?.Title);
                     entries.Add(new Entry() {
-                        Title = $" — {item.Note} —",
+                        Title = $" — {item?.Note} —",
                     });
                 }
             }
@@ -141,13 +144,14 @@ public class Invoice {//: IParsable<Invoice>
 
             foreach (var item in EditedItems) {
                 entries.Add(new Entry() {
-                    Title = item.Title,
-                    Value = item.Count,
+                    Title = item?.Title,
+                    Value = item?.Count,
+                    Values = new List<string?> { item?.Count }
                 });
-                if (item.Note != null && item.Note?.Trim().Length > 0) {
-                    Console.WriteLine(item.Title);
+                if (item?.Note != null && item?.Note?.Trim().Length > 0) {
+                    Console.WriteLine(item?.Title);
                     entries.Add(new Entry() {
-                        Title = item.Note,
+                        Title = item?.Note,
                     });
                 }
             }
@@ -194,7 +198,8 @@ public class Invoice {//: IParsable<Invoice>
             return GetPropertyListEntries(properties, new List<string> { "ClientAddress" });
         }
     }
-
+    public string? Note { get; set; }
+    public List<string?> FooterNotes { get; set; } = new List<string?>();
     public string? note1 { get; set; }
     public string? note2 { get; set; }
     public string? note3 { get; set; }
@@ -215,6 +220,7 @@ internal class DateTimeConverter : JsonConverter<DateTime> {
 public class Entry {
     // [JsonConverter(typeof(StringConverter))]
     public string? Title { get; set; }
+    public List<string?> Values { get; set; } = new List<string?>();
     public string? Value { get; set; }
     public string? Value2 { get; set; }
     public string? Value3 { get; set; }
