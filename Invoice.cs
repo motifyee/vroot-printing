@@ -38,11 +38,20 @@ namespace TodoApi {
             System.Reflection.PropertyInfo? info = type.GetProperty(propertyName);
             return (string?)info?.GetValue(this, null)?.ToString();
         }
+        private int parseint(string str) {
+            int val = 0;
+            Int32.TryParse(str, out val);
+            return val;
+        }
+        private int sumCount(List<Item> list) {
+            return list.Aggregate(0, (p, c) => p + parseint(c.Count ?? ""));
+        }
+
         private List<string> SplitLongValueLines(string value) {
             var line = "";
             var lines = new List<string>();
             var _value = value.Replace(Environment.NewLine, " — ").Replace("\n", " — ");
-            Console.WriteLine(_value);
+            // Console.WriteLine(_value);
             // string[] nm = words.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var wd in _value.Split(" ")) {
                 if (!wd.Contains("—") && line.Length + wd.Length <= MaxLineLength) {
@@ -114,6 +123,12 @@ namespace TodoApi {
         }
 
         public List<Item> Items { get; set; } = new List<Item>();
+        public string? ItemsCountInfo {
+            get {
+                if (Items == null || Items!.Count == 0) return null;
+                return $"مجموع الأصناف {sumCount(Items)}";
+            }
+        }
 
         public List<Entry> ItemsInfo {
             get {
@@ -132,7 +147,6 @@ namespace TodoApi {
 
 
                     if (item?.Note != null && item?.Note?.Trim().Length > 0) {
-                        // Console.WriteLine(item?.Title);
                         lines = SplitLongValueLines(item?.Note ?? "");
                         for (var i = 0; i < lines.Count; i++)
                             entries.Add(new Entry() {
@@ -147,6 +161,12 @@ namespace TodoApi {
         }
 
         public List<Item> EditedItems { get; set; } = new List<Item>();
+        public string? EditedItemsCountInfo {
+            get {
+                if (EditedItems == null || EditedItems!.Count == 0) return null;
+                return $"مجموع الأصناف المعدلة {sumCount(EditedItems)}";
+            }
+        }
         public string? EditedTitle {
             get {
                 return (EditedItems != null && EditedItems?.Count > 0) ? "تعديل" : null;
@@ -177,8 +197,42 @@ namespace TodoApi {
             }
         }
 
-        public string? SectionName { get; set; }
 
+        public List<Item> OtherKitchensItems { get; set; } = new List<Item>();
+        public string? OtherKitchensItemsCountInfo {
+            get {
+                if (OtherKitchensItems == null || OtherKitchensItems!.Count == 0) return null;
+                return $"مجموع الأصناف الباقية {sumCount(OtherKitchensItems)}";
+            }
+        }
+        public List<Entry> OtherKitchensItemsInfo {
+            get {
+                var entries = new List<Entry>();
+
+                foreach (var item in OtherKitchensItems) {
+                    var lines = SplitLongValueLines(item?.Title ?? "");
+
+                    for (var i = 0; i < lines.Count; i++)
+                        entries.Add(new Entry() {
+                            Title = lines[i],
+                            Value = i == 0 ? item?.Count : null,
+                        });
+                }
+
+                return entries;
+            }
+        }
+        public List<string> OtherKitchens { get; set; } = new List<string>();
+        public string? OtherKitchensTitle {
+            get {
+                if (OtherKitchens == null && OtherKitchens?.Count == 0) return null;
+                if (OtherKitchens == null && OtherKitchens?.Count == 0) return null;
+                string kitchenNames = String.Join(", ", OtherKitchens!.ToArray());
+                return $"يوجد بقية للطلب في {kitchenNames}";
+            }
+        }
+
+        public string? SectionName { get; set; }
         public string? ScheduleTime { get; set; }
         public string? ScheduleTitle {
             get {
