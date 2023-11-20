@@ -53,7 +53,8 @@ namespace TodoApi {
 
         }
 
-        private List<string> SplitLongValueLines(string value) {
+        private List<string> SplitLongValueLines(string? value) {
+            if (value == null || value.Trim().Length == 0) return new List<string> { "" };
             var line = "";
             var lines = new List<string>();
             var _value = value.Replace(Environment.NewLine, " — ").Replace("\n", " — ");
@@ -132,7 +133,7 @@ namespace TodoApi {
         public string? ItemsCountInfo {
             get {
                 if (Items == null || Items!.Count == 0) return null;
-                return $"مجموع الأصناف {sumCount(Items)}";
+                return $"مجموع الأصناف [ {sumCount(Items)} ]";
             }
         }
 
@@ -170,7 +171,7 @@ namespace TodoApi {
         public string? EditedItemsCountInfo {
             get {
                 if (EditedItems == null || EditedItems!.Count == 0) return null;
-                return $"مجموع الأصناف المعدلة {sumCount(EditedItems)}";
+                return $"مجموع الأصناف المعدلة [ {sumCount(EditedItems)} ]";
             }
         }
         public string? EditedTitle {
@@ -208,7 +209,7 @@ namespace TodoApi {
         public string? OtherKitchensItemsCountInfo {
             get {
                 if (OtherKitchensItems == null || OtherKitchensItems!.Count == 0) return null;
-                return $"مجموع الأصناف الباقية {sumCount(OtherKitchensItems)}";
+                return $"مجموع الأصناف الباقية [ {sumCount(OtherKitchensItems)} ]";
             }
         }
         public List<Entry> OtherKitchensItemsInfo {
@@ -231,10 +232,26 @@ namespace TodoApi {
         public List<string> OtherKitchens { get; set; } = new List<string>();
         public string? OtherKitchensTitle {
             get {
-                if (OtherKitchens == null && OtherKitchens?.Count == 0) return null;
-                if (OtherKitchens == null && OtherKitchens?.Count == 0) return null;
-                string kitchenNames = String.Join(", ", OtherKitchens!.ToArray());
-                return $"يوجد بقية للطلب في {kitchenNames}";
+                if (OtherKitchens == null || OtherKitchens?.Count == 0) return null;
+                if (OtherKitchensItems == null || OtherKitchensItems?.Count == 0) return null;
+                string kitchenNames = String.Join("و ", OtherKitchens!.ToArray());
+                return $"يوجد بقية للطلب في [ {kitchenNames} ]";
+            }
+        }
+        public List<Entry> OtherKitchensInfo {
+            get {
+                var ret = new List<Entry>();
+
+                if (OtherKitchensTitle == null || OtherKitchensTitle?.Length == 0) return ret;
+                if (OtherKitchens == null || OtherKitchens?.Count == 0) return ret;
+
+                foreach (var item in SplitLongValueLines(OtherKitchensTitle!)) {
+                    ret.Add(new Entry() {
+                        Title = item,
+                    });
+                }
+
+                return ret;
             }
         }
 
@@ -271,7 +288,6 @@ namespace TodoApi {
                  {"Vat","Vat 14%"},
                  {"Total", "اجمالي"}
             };
-
                 return GetPropertyListEntries(properties, new List<string> { "ClientAddress" });
             }
         }

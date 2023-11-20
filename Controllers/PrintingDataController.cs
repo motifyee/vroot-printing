@@ -29,6 +29,7 @@ public class PrintingDataController : ControllerBase {
         };
 
         try {
+            Console.WriteLine("creating file");
 
             MiniExcel.SaveAsByTemplate(@outputPath, @inputPath, invoice, configuration: config);
 
@@ -44,7 +45,9 @@ public class PrintingDataController : ControllerBase {
             //return StatusCode(StatusCodes.Status500InternalServerError, result);
 
         } catch (Exception e) {
-            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            Console.WriteLine(e.Message);
+            var err = $"message = {e.Message}, stack = {e.StackTrace}";
+            return StatusCode(StatusCodes.Status500InternalServerError, err);
         }
     }
 
