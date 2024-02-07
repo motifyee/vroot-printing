@@ -1,3 +1,5 @@
+using System;
+using System.Globalization;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MiniExcelLibs;
@@ -17,8 +19,21 @@ public class PrintingDataController : ControllerBase {
     [HttpPost(Name = "PostPrintingData")]
     public dynamic Post([FromBody] Invoice invoice) {
 
-        string outputfile = $"{invoice.Date}#{invoice.InvoiceNo}-{Guid.NewGuid()}.xlsx";
-        string outputPath = Path.Combine(Environment.CurrentDirectory, "printer", "out", outputfile);
+        var culture = new CultureInfo("ar-EG");
+        var date = DateTime.Parse(invoice.Date);
+
+        string year = date.Year.ToString();
+        string month = $"{date.Month.ToString()} — {date.ToString("MMMM", culture)}";
+        string day = $"{date.Day.ToString()} — {date.ToString("dddd", culture)}";
+
+
+        string outputfile = $"{invoice.Date} #{invoice.InvoiceNo} — {Guid.NewGuid()}.xlsx";
+        
+        string folderPath = Path.Combine(Environment.CurrentDirectory, "printer", "out", year, month, day, $"فاتورة — {invoice.InvoiceNo}");
+        if(!Directory.Exists(folderPath)){
+            Directory.CreateDirectory(folderPath);
+        }
+        string outputPath = Path.Combine(folderPath, outputfile);
 
         string inputPath = Path.Combine(Environment.CurrentDirectory, "printer", "templates", $"{invoice.TemplateName ?? ""}.xlsx");
 
