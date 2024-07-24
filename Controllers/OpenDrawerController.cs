@@ -1,7 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace TodoApi.Controllers {
+namespace PrintingApi.Controllers {
 
   [ApiController]
   [Route("[controller]")]
