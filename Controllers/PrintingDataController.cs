@@ -17,9 +17,7 @@ public class PrintingDataController : ControllerBase {
   }
 
   [HttpGet(Name = "TestPrintingData")]
-  public dynamic Get() {
-    return Ok("Success");
-  }
+  public dynamic Get() => Ok("Printing Data Api Works!");
 
   [HttpPost(Name = "PostPrintingData")]
   public dynamic Post([FromBody] Invoice invoice) {

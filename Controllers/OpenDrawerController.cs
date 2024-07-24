@@ -7,13 +7,8 @@ namespace TodoApi.Controllers {
   [Route("[controller]")]
   public class OpenDrawerController : ControllerBase {
 
-
-    public OpenDrawerController() { }
-
     [HttpGet(Name = "TestOpenDrawer")]
-    public dynamic Get() {
-      return Ok("Success");
-    }
+    public dynamic Get() => Ok("Open Drawer Api Works!");
 
     [HttpPost(Name = "PostOpenDrawer")]
     public dynamic Post(string printerName) {
