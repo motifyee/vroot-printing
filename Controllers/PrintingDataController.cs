@@ -61,7 +61,7 @@ namespace PrintingApi.Controllers {
       };
 
       try {
-        Console.WriteLine("creating file");
+        Console.WriteLine("creating file: " + @outputPath);
 
         MiniExcel.SaveAsByTemplate(@outputPath, @inputPath, invoice, configuration: config);
 
@@ -90,7 +90,11 @@ namespace PrintingApi.Controllers {
 
       if (settings == null) return true;
 
-      if (!settings.PrintReceiptForPendingInvoice && invoice.TemplateName == "receipt" && invoice.Status == 1)
+      if (!settings.PrintReceiptForPendingInvoice && 
+            invoice.InvoiceType.Trim() == "صالة" &&
+            invoice.TemplateName == "receipt" && 
+            invoice.Status == 1
+        )
         return false;
 
       return true;
