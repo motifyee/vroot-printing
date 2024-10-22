@@ -107,9 +107,9 @@ public class PrintingDataController(ILogger<PrintingDataController> logger, IHos
   public Invoice ProcessInvoicePrintingSettings(Invoice invoice, PrintingSettings? settings) {
     if (settings == null) return invoice;
 
-    if (invoice.GlobalPrinter &&
+    if (!invoice.GlobalPrinter &&
         invoice.TemplateName == "kitchen" &&
-        !settings.OutputClientInfoForGlobalKitchenPrinter
+        settings.OutputClientInfoForGlobalKitchenPrinterOnly
       ) {
       invoice.ClientName = null;
       invoice.ClientPhone1 = null;
@@ -126,8 +126,8 @@ public class PrintingDataController(ILogger<PrintingDataController> logger, IHos
     [JsonProperty("print_receipt_for_pending_invoice")]
     public bool PrintReceiptForPendingInvoice { get; set; } = true;
 
-    [JsonProperty("output_client_info_for_global_kitchen_printer")]
-    public bool OutputClientInfoForGlobalKitchenPrinter { get; set; } = true;
+    [JsonProperty("output_client_info_for_global_kitchen_printer_only")]
+    public bool OutputClientInfoForGlobalKitchenPrinterOnly { get; set; } = true;
   }
 
   private static string SendXlsx2PrinterByInterop(string filePath, string? printerName) {
