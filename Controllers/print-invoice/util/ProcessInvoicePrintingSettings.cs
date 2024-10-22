@@ -5,7 +5,7 @@ public partial class PrintInvoiceController {
   private static Invoice ProcessInvoicePrintingSettings(Invoice invoice, PrintingSettings? settings) {
     if (settings == null) return invoice;
 
-    if (!invoice.GlobalPrinter &&
+    if (!(invoice.GlobalPrinter??false) &&
         invoice.TemplateName == "kitchen" &&
         settings.OutputClientInfoForGlobalKitchenPrinterOnly
       ) {

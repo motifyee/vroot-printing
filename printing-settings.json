@@ -1,4 +1,4 @@
 {
 	"print_receipt_for_pending_invoice": false,
-	"output_client_info_for_global_kitchen_printer_only": false
+	"output_client_info_for_global_kitchen_printer_only": true
 }

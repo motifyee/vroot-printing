@@ -8,5 +8,5 @@ public class PrintingSettings {
   public bool PrintReceiptForPendingInvoice { get; set; } = true;
 
   [JsonProperty("output_client_info_for_global_kitchen_printer_only")]
-  public bool OutputClientInfoForGlobalKitchenPrinterOnly { get; set; } = true;
+  public bool OutputClientInfoForGlobalKitchenPrinterOnly { get; set; } = false;
 }

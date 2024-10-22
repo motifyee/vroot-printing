@@ -8,7 +8,7 @@ namespace PrintingApi {
     public int? Status { get; set; }
     public string? PrinterName { get; set; }
     public string? TemplateName { get; set; }
-    public bool GlobalPrinter { get; set; } = false;
+    public bool? GlobalPrinter { get; set; }
 
     public string? Company { get; set; }
     public string? Cashier { get; set; }
