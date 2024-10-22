@@ -19,6 +19,8 @@ namespace PrintingApi {
     public string? Date { get; set; }
     public string? Time { get; set; }
 
+    public string? ShiftNo { get; set; }
+
     public string? InvoiceNo { get; set; }
 
     public string? InvoiceType { get; set; }
