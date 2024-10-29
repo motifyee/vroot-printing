@@ -1,6 +1,7 @@
 
 
 using Newtonsoft.Json;
+using TemplatePrinting.Models;
 
 namespace TemplatePrinting.Controllers;
 
