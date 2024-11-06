@@ -4,7 +4,7 @@ namespace TemplatePrinting.Controllers;
 
 public partial class PrintInvoiceController {
 
-  public string GetOutputFilePath(string? date, string? invoiceNo, string? invoiceType, string ext = "xlsx") {
+  public string GetOutputFilePath(string? date, string? invoiceNo, string? templateName, string ext = "xlsx") {
     var culture = new CultureInfo("ar-EG");
     _ = DateTime.TryParse(date ?? DateTime.Now.ToString(), out DateTime _date);
 
@@ -12,7 +12,7 @@ public partial class PrintInvoiceController {
     string month = $"{_date.Month} — {_date.ToString("MMMM", culture)}";
     string day = $"{_date.Day} — {_date.ToString("dddd", culture)}";
 
-    string fileName = $"{date ?? ""} #{invoiceNo} — {invoiceType} — {Guid.NewGuid()}.{ext}";
+    string fileName = $"{date ?? ""} #{invoiceNo} — {templateName} — {Guid.NewGuid()}.{ext}";
 
     string folderPath = Path.Combine(
            Environment.CurrentDirectory,

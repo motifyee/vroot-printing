@@ -6,7 +6,7 @@ using TemplatePrinting.Models.Invoice;
 namespace TemplatePrinting.Controllers;
 public partial class PrintInvoiceController {
   private async Task<ActionResult> PrintInvoiceByHtml(Invoice invoice) {
-    var outputFile = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.InvoiceType, "pdf");
+    var outputFile = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.TemplateName, "pdf");
     _logger.LogInformation("Creating file: " + outputFile + "\n");
 
     _logger.LogInformation("printing using Html template");

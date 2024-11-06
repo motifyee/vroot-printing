@@ -18,7 +18,7 @@ public partial class PrintInvoiceController {
 
     if (_hostEnv.IsProduction()) pdf.Print();
 
-    var outputFilePath = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.InvoiceType, "pdf");
+    var outputFilePath = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.TemplateName, "pdf");
     pdf.SaveToFile(outputFilePath, FileFormat.PDF);
   }
 }

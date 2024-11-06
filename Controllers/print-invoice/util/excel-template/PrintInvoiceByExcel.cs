@@ -22,7 +22,7 @@ public partial class PrintInvoiceController {
         $"{invoice!.TemplateName ?? ""}.xlsx"
     );
 
-    string outputFile = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.InvoiceType);
+    string outputFile = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.TemplateName);
 
     _logger.LogInformation("Creating file: " + outputFile + "\n");
 
