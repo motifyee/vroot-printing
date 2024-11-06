@@ -13,7 +13,8 @@ public partial class PrintInvoiceController {
     };
 
     // Load fonts and images
-    await page.GoToAsync($"file:///printer/templates/html/{templateName}.html", o);
+    var path = Path.GetFullPath($"printer/templates/html/{templateName}.html");
+    await page.GoToAsync($"file://{path}", o);
     await page.SetContentAsync(html);
     var pdfData = await page.PdfDataAsync(new PdfOptions {
       Format = new PuppeteerSharp.Media.PaperFormat(3.14961M, 100),
