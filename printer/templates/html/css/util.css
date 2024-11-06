@@ -16,6 +16,10 @@
 	align-items: center;
 }
 
+.items-stretch {
+	align-items: stretch;
+}
+
 .justify-center {
 	justify-content: center;
 }
@@ -26,6 +30,9 @@
 
 .justify-around {
 	justify-content: space-around;
+}
+.justify-stretch {
+	justify-content: stretch;
 }
 
 .border-solid {
@@ -43,4 +50,19 @@
 
 .right {
 	text-align: right;
+}
+
+.h-full {
+	height: 100%;
+}
+
+.w-full {
+	width: 100%;
+}
+
+.relative {
+	position: relative;
+}
+.absolute {
+	position: absolute;
 }

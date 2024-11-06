@@ -11,10 +11,12 @@
 	</head>
 
 	<body>
+		<!-- logo -->
 		<div class="center">
 			<img src="images/logo.png" />
 		</div>
 
+		<!-- slogan -->
 		<div class="center" style="font-size: large">
 			<span
 				style="
@@ -30,21 +32,26 @@
 			</span>
 		</div>
 
+		<!-- time and date -->
 		<div class="flex justify-between border-bottom-solid">
 			<span>{{ time }}</span>
 			<span>{{ date }}</span>
 			<span>Date</span>
 		</div>
 
+		<!-- cashier -->
 		<div class="flex">
 			<span class="flex-1 center">{{ cashier }}</span>
 			<span style="gap: 10px">User</span>
 		</div>
 
+		<!-- delivery -->
+		{{ if delivery }}
 		<div class="flex border-solid justify-around">
 			<span>طيار</span>
 			<span class="">{{ delivery }}</span>
 		</div>
+		{{ end }}
 
 		<table>
 			<tr>
@@ -68,6 +75,7 @@
 			</tr>
 		</table>
 
+		<!-- client info -->
 		{{ if client_name }}
 		<table>
 			{{ for info in client_info }}
@@ -79,23 +87,42 @@
 		</table>
 		{{ end }}
 
+		<!-- items -->
 		<table style="box-shadow: 0 0 0 2px #666">
 			{{ for item in items }}
 			<tr>
 				<td style="width: 10px">{{ item.count }}</td>
 				<td class="right">{{ item.title }}</td>
-				<td style="width: 40px; max-width: 40px">{{ item.total_price }}</td>
+				<td class="invoice-info-val">{{ item.total_price }}</td>
 			</tr>
 			{{ end }}
 		</table>
 
+		<!-- invoice info -->
 		<table>
+			<tr>
+				<td class="right">Order</td>
+				<td class="invoice-info-val">{{ items_total }}</td>
+			</tr>
+			<tr>
+				<td class="right">Tax</td>
+				<td class="invoice-info-val">{{ items_tax14 }}</td>
+			</tr>
+			<tr>
+				<td class="right">Discount</td>
+				<td class="invoice-info-val">{{ items_tax14 }}</td>
+			</tr>
 			{{ for info in invoice_info }}
 			<tr>
 				<td class="right">{{ info.title }}</td>
-				<td style="width: 40px; max-width: 40px">{{ info.value }}</td>
+				<td class="invoice-info-val">{{ info.value }}</td>
 			</tr>
 			{{ end }}
 		</table>
+
+		<!-- note -->
+		{{ end }} {{ if note }}
+		<div>{{ note }}</div>
+		{{ end }}
 	</body>
 </html>

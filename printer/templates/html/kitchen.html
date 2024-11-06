@@ -26,7 +26,7 @@
 	<body>
 		<table>
 			<tr>
-				<td colspan="7" style="padding-block: 30px">{{ printer_name }}</td>
+				<td colspan="7" style="padding-block: 30px">{{ section_name }}</td>
 			</tr>
 
 			<tr>
@@ -51,12 +51,18 @@
 			</tr>
 
 			<tr>
+				<td colspan="3">{{ table_title }}</td>
+				<td colspan="4">{{ table_no }}</td>
+			</tr>
+
+			<tr>
 				<td colspan="7"></td>
 			</tr>
 
+			<!-- items -->
 			{{ for item in items }}
 			<tr>
-				<td colspan="1">{{ item.total_price }}</td>
+				<td colspan="1">{{ item.count }}</td>
 				<td colspan="6" class="rtl">{{ item.title }}</td>
 			</tr>
 			{{ if item.note }}
@@ -67,5 +73,24 @@
 			</tr>
 			{{ end }} {{ end }}
 		</table>
+
+		<!-- edited items -->
+		{{ if edited_title }}
+		<table>
+			<tr>
+				<td colspan="2" rowspan="2">{{ edited_title }}</td>
+			</tr>
+			{{ for items in edited_items }}
+			<tr>
+				<td>{{ info.value }}</td>
+				<td class="rtl">{{ info.title }}</td>
+			</tr>
+			{{ end }}
+		</table>
+
+		<!-- note -->
+		{{ end }} {{ if note }}
+		<div>{{ note }}</div>
+		{{ end }}
 	</body>
 </html>
