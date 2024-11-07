@@ -52,6 +52,10 @@
 	text-align: right;
 }
 
+.left {
+	text-align: left;
+}
+
 .h-full {
 	height: 100%;
 }

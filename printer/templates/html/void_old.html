@@ -37,31 +37,30 @@
 			</div>
 		</div>
 
-		<div class="w-full border-solid center">
-			<div style="padding: 10px">{{ section_name }}</div>
+		<div
+			class="flex justify-stretch items-stretch w-full"
+			style="min-height: 80px; gap: 10px"
+		>
+			<div class="border-solid flex-1 flex-col center h-full">
+				<div>Kitchen</div>
+				<div>{{ section_name }}</div>
+			</div>
+			<div class="border-solid flex-1 flex-col center h-full">
+				<div>{{ invoice_type }}</div>
+				<div>{{ invoice_no }}</div>
+			</div>
+			<div class="border-solid flex-1 flex-col center h-full">
+				<div>Date</div>
+				<div>{{ date }}</div>
+			</div>
 		</div>
-
-		<table>
-			<tr>
-				<td style="width: 120px; max-width: 120px" class="left">Date</td>
-				<td class="left">{{ date }}</td>
-			</tr>
-			<tr>
-				<td class="left">Order Type</td>
-				<td class="left">{{ invoice_type }}</td>
-			</tr>
-			<tr>
-				<td class="left">Order no.</td>
-				<td class="left">{{ invoice_no }}</td>
-			</tr>
-		</table>
 
 		<!-- items -->
 		<table style="box-shadow: 0 0 0 2px #666">
 			{{ for item in items }}
 			<tr>
-				<td style="width: 40px">{{ item.price }}</td>
-				<td style="width: 30px">{{ item.count }}</td>
+				<td style="width: 10px">{{ item.price }}</td>
+				<td style="width: 40px">{{ item.count }}</td>
 				<td class="right">{{ item.title }}</td>
 			</tr>
 			{{ end }}
