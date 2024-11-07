@@ -8,3 +8,5 @@ printer/templates/*.*
 !printer/templates/*.html
 !printer/templates/*.css
 !printer/templates/*.ttf
+
+printer/lib/chrome-headless-shell-win64
