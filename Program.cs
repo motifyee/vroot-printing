@@ -22,7 +22,9 @@ builder.Services.AddCors(options => {
 builder.Services.AddSingleton<IPrintingUtils>(new PrintingUtils());
 var app = builder.Build();
 
-app.Services.GetRequiredService<IPrintingUtils>().Setup();
+var utils = app.Services.GetRequiredService<IPrintingUtils>();
+utils.Setup();
+using var browser = utils.Browser;
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {

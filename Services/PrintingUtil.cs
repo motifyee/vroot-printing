@@ -1,11 +1,12 @@
 
 using Newtonsoft.Json;
 using PuppeteerSharp;
+using System.Diagnostics;
 using TemplatePrinting.Models;
 
 namespace TemplatePrinting.Services;
 
-public class PrintingUtils() : IPrintingUtils {
+public class PrintingUtils() : IPrintingUtils, IDisposable {
   private static IBrowser? _browser;
   public void Setup() {
     LoadSpireLicenseKey();
@@ -19,18 +20,33 @@ public class PrintingUtils() : IPrintingUtils {
 
     Console.WriteLine("Spire license loaded");
   }
+
+
+  public async void Dispose() {
+    await Browser.CloseAsync();
+
+    GC.Collect();
+    GC.SuppressFinalize(this);
+  }
+
+  private readonly string _execName = "chrome-headless-shell(template-printing)";
   public IBrowser Browser {
     get {
       if (_browser != null && _browser.IsConnected) return _browser;
+      _browser?.CloseAsync().GetAwaiter().GetResult();
 
-      Console.WriteLine("Loading Chrome Headless Shell...");
+      // close all chrome processes that might be unused
+      // only problematic in case of multiple instances of this service
+      foreach (var p in Process.GetProcessesByName(_execName))
+        p.Kill();
 
-      var chromePath = Path.GetFullPath("printer/lib/chrome-headless-shell-win64/chrome-headless-shell.exe");
-      if (File.Exists(chromePath)) {
+      string execFolder = Path.Combine(Environment.CurrentDirectory, "printer", "lib", "chrome-headless-shell-win64");
+      string execPath = Path.Combine(execFolder, _execName + ".exe");
+      if (File.Exists(execPath)) {
         _browser = Puppeteer.LaunchAsync(
           new LaunchOptions {
             Headless = true,
-            ExecutablePath = chromePath,
+            ExecutablePath = execPath,
           }
         ).GetAwaiter().GetResult();
 
@@ -38,17 +54,34 @@ public class PrintingUtils() : IPrintingUtils {
         return _browser;
       }
 
+      Console.WriteLine("Downloading Chrome Headless Shell...");
       var browserFetcher = new BrowserFetcher();
-      _ = browserFetcher.DownloadAsync().Result;
+      _ = browserFetcher.DownloadAsync().GetAwaiter().GetResult();
+      // _browser = Puppeteer.LaunchAsync(new LaunchOptions { Headless = true, }).GetAwaiter().GetResult();
 
-      _browser = Puppeteer.LaunchAsync(
-        new LaunchOptions {
-          Headless = true,
-        }
-      ).GetAwaiter().GetResult();
+      // move downloaded files to lib folder & rename executable to _execName
+      string assemblyPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+      string assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
+      var shellPath = Path.Combine(assemblyDirectory, "ChromeHeadlessShell");
+      if (Directory.Exists(shellPath)) {
+        var versionFolder = Directory.GetDirectories(shellPath)[0];
+        File.Move(
+          Path.Combine(shellPath, versionFolder, "chrome-headless-shell-win64", "chrome-headless-shell.exe"),
+          Path.Combine(shellPath, versionFolder, "chrome-headless-shell-win64", _execName + ".exe")
+        );
 
-      Console.WriteLine("Chrome Headless Shell downloaded" + "\n");
-      return _browser;
+        Directory.Move(
+          Path.Combine(shellPath, versionFolder, "chrome-headless-shell-win64"),
+          execFolder
+        );
+
+        Directory.Delete(Path.Combine(assemblyDirectory, "Chrome"), true);
+        Directory.Delete(Path.Combine(assemblyDirectory, "ChromeHeadlessShell"), true);
+
+        Console.WriteLine("Installed Chrome Headless Shell");
+      }
+
+      return Browser;
     }
   }
   public PrintingSettings? PrintingSettings {
