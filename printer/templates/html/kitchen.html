@@ -67,7 +67,9 @@
 			<!-- items -->
 			{{ for item in items }}
 			<tr>
-				<td colspan="1">{{ item.count }}</td>
+				<td colspan="1" style="width: 60px; max-width: 60px">
+					{{ item.count }}
+				</td>
 				<td colspan="6" class="rtl">{{ item.title }}</td>
 			</tr>
 			{{ if item.note }}
@@ -90,7 +92,13 @@
 				<td style="width: 60px; max-width: 60px">{{ item.count }}</td>
 				<td class="rtl">{{ item.title }}</td>
 			</tr>
-			{{ end }}
+			{{ if item.note }}
+			<tr>
+				<td colspan="7" class="rtl" style="font-weight: normal">
+					&#8592; &nbsp;{{ item.note }}
+				</td>
+			</tr>
+			{{ end }} {{ end }}
 		</table>
 		{{ end }}
 

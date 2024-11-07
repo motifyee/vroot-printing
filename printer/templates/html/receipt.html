@@ -13,7 +13,7 @@
 	<body>
 		<!-- logo -->
 		<div class="center">
-			<img src="images/logo.png" />
+			<img src="images/logo.jpeg" style="max-width: 120px" />
 		</div>
 
 		<!-- slogan -->
@@ -46,10 +46,10 @@
 		</div>
 
 		<!-- delivery -->
-		{{ if delivery }}
+		{{ if delivery_name }}
 		<div class="flex border-solid justify-around">
 			<span>طيار</span>
-			<span class="">{{ delivery }}</span>
+			<span class="">{{ delivery_name }}</span>
 		</div>
 		{{ end }}
 
