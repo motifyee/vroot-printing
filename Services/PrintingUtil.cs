@@ -10,6 +10,7 @@ public class PrintingUtils() : IPrintingUtils, IDisposable {
 
   public void Setup() {
     LoadSpireLicenseKey();
+    if (!PrintingSettings?.UseHtmlTemplate ?? false) return;
     _ = Browser;
   }
 
