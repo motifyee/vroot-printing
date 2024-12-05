@@ -76,7 +76,6 @@ public partial class Invoice {
             new Entry() {
               Title = prop.Value,
               Value = value,
-              // Values = new List<string?> { value }
             }
         );
         continue;
@@ -90,7 +89,6 @@ public partial class Invoice {
             new Entry() {
               Title = i == 0 ? prop.Value : null,
               Value = lines[i],
-              // Values = new List<string?> { lines[i] }
             }
         );
       }

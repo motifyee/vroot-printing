@@ -4,7 +4,7 @@ namespace TemplatePrinting.Controllers;
 
 public partial class PrintInvoiceController {
 
-  public string GetOutputFilePath(string? date, string? invoiceNo, string? templateName, string ext = "xlsx") {
+  private string GetOutputFilePath(string? date, string? invoiceNo, string? templateName, string ext = "xlsx") {
     var culture = new CultureInfo("ar-EG");
     _ = DateTime.TryParse(date ?? DateTime.Now.ToString(), out DateTime _date);
 

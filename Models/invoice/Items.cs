@@ -1,3 +1,5 @@
+using TemplatePrinting.Services;
+
 namespace TemplatePrinting.Models.Invoice;
 public partial class Invoice {
 
@@ -10,9 +12,12 @@ public partial class Invoice {
     }
   }
 
-  public List<Entry> ItemsInfo {
+  public List<Item> ItemsInfo {
     get {
-      var entries = new List<Entry>();
+      var util = new PrintingUtils();
+      var printNote = util.PrintingSettings?.PrintItemInfoNote ?? true;
+
+      var entries = new List<Item>();
 
       foreach (var item in Items) {
         var lines = SplitLongValueLines(item?.Title ?? "");
@@ -20,17 +25,19 @@ public partial class Invoice {
         // TODO_BESAFE if sent is null
         for (var i = 0; i < lines.Count; i++)
           entries.Add(
-              new Entry() {
+              new Item() {
                 Title = lines[i],
                 Value = i == 0 ? item?.Count : null,
-                // Values = new List<string?> { lines[i] }
+                Count = i == 0 ? item?.Count : null,
+                Price = i == 0 ? item?.Price : null,
+                TotalPrice = i == 0 ? item?.TotalPrice : null,
               }
           );
 
-        if (item?.Note != null && item?.Note?.Trim().Length > 0) {
+        if (printNote && item?.Note != null && item?.Note?.Trim().Length > 0) {
           lines = SplitLongValueLines(item?.Note ?? "");
           for (var i = 0; i < lines.Count; i++)
-            entries.Add(new Entry() { Title = $" — {lines[i]} —", });
+            entries.Add(new Item() { Title = $" — {lines[i]} —", });
         }
       }
 
@@ -49,21 +56,21 @@ public partial class Invoice {
   public string? EditedTitle {
     get { return (EditedItems != null && EditedItems?.Count > 0) ? "تعديل" : null; }
   }
-  public List<Entry> EditedItemsInfo {
+  public List<Item> EditedItemsInfo {
     get {
-      var entries = new List<Entry>();
+      var entries = new List<Item>();
 
       foreach (var item in EditedItems) {
         var lines = SplitLongValueLines(item?.Title ?? "");
         for (var i = 0; i < lines.Count; i++)
           entries.Add(
-              new Entry() { Title = lines[i], Value = i == 0 ? item?.Count : null, }
+              new Item() { Title = lines[i], Value = i == 0 ? item?.Count : null, }
           );
 
         if (item?.Note != null && item?.Note?.Trim().Length > 0) {
           lines = SplitLongValueLines(item?.Note ?? "");
           for (var i = 0; i < lines.Count; i++)
-            entries.Add(new Entry() { Title = $" — {lines[i]} —", });
+            entries.Add(new Item() { Title = $" — {lines[i]} —", });
         }
       }
 
@@ -79,16 +86,16 @@ public partial class Invoice {
       return $"مجموع الأصناف الباقية [ {SumCount(OtherKitchensItems)} ]";
     }
   }
-  public List<Entry> OtherKitchensItemsInfo {
+  public List<Item> OtherKitchensItemsInfo {
     get {
-      var entries = new List<Entry>();
+      var entries = new List<Item>();
 
       foreach (var item in OtherKitchensItems) {
         var lines = SplitLongValueLines(item?.Title ?? "");
 
         for (var i = 0; i < lines.Count; i++)
           entries.Add(
-              new Entry() { Title = lines[i], Value = i == 0 ? item?.Count : null, }
+              new Item() { Title = lines[i], Value = i == 0 ? item?.Count : null, }
           );
       }
 
@@ -106,9 +113,9 @@ public partial class Invoice {
       return $"يوجد بقية للطلب في [ {kitchenNames} ]";
     }
   }
-  public List<Entry> OtherKitchensInfo {
+  public List<Item> OtherKitchensInfo {
     get {
-      var ret = new List<Entry>();
+      var ret = new List<Item>();
 
       if (OtherKitchensTitle == null || OtherKitchensTitle?.Length == 0)
         return ret;
@@ -116,7 +123,7 @@ public partial class Invoice {
         return ret;
 
       foreach (var item in SplitLongValueLines(OtherKitchensTitle!)) {
-        ret.Add(new Entry() { Title = item, });
+        ret.Add(new Item() { Title = item, });
       }
 
       return ret;

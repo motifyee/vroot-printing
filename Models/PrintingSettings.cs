@@ -18,4 +18,7 @@ public class PrintingSettings {
 
   [JsonProperty("use_spire_excel_printer")]
   public bool UseSpireExcelPrinter { get; set; } = false;
+
+  [JsonProperty("print_item_info_note")]
+  public bool PrintItemInfoNote { get; set; } = true;
 }

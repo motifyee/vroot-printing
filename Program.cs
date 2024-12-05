@@ -24,7 +24,6 @@ var app = builder.Build();
 
 var utils = app.Services.GetRequiredService<IPrintingUtils>();
 utils.Setup();
-using var browser = utils.Browser;
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {

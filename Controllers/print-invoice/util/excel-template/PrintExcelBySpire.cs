@@ -7,7 +7,7 @@ using TemplatePrinting.Models;
 
 namespace TemplatePrinting.Controllers;
 public partial class PrintInvoiceController {
-  public void PrintExcelBySpire(string filePath, string? printerName) {
+  private void PrintExcelBySpire(string filePath, string? printerName) {
     if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
 
     var workbook = new Workbook();
