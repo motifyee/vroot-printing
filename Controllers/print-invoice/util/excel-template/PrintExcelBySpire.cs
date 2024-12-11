@@ -36,8 +36,8 @@ public partial class PrintInvoiceController {
     var paperSize = new PaperSize("Custom", 3150, 100) { RawKind = (int)PaperKind.Custom };
     workbook.PrintDocument.DefaultPageSettings.PaperSize = paperSize;
 
-    workbook.PrintDocument.PrinterSettings.PrintToFile = true;
-    workbook.PrintDocument.PrinterSettings.PrintFileName = "InvoiceTemplate.pdf";
+    // workbook.PrintDocument.PrinterSettings.PrintToFile = true;
+    // workbook.PrintDocument.PrinterSettings.PrintFileName = "InvoiceTemplate.pdf";
 
     timer.Print("time to print");
 
