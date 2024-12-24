@@ -6,7 +6,8 @@ using TemplatePrinting.Models;
 namespace TemplatePrinting.Services;
 
 public class PrintingUtils() : IPrintingUtils, IDisposable {
-  public string AssemblyPath = System.Reflection.Assembly.GetEntryAssembly()?.Location ?? Environment.CurrentDirectory;
+  // public string AssemblyPath = System.Reflection.Assembly.GetEntryAssembly()?.Location ?? Environment.CurrentDirectory;
+  public string AssemblyPath = Environment.CurrentDirectory;
   private static IBrowser? _browser;
 
   public void Setup() {
