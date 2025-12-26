@@ -242,8 +242,11 @@
 			async function fetchPrinters() {
 				const container = document.getElementById('printerContainer');
 				try {
-					const response = await fetch('/Printers/Dummy');
-					if (!response.ok) throw new Error('Failed to fetch printers');
+					const response = await fetch('/Printers/Data');
+					if (!response.ok) {
+						const errorMsg = await response.text();
+						throw new Error(errorMsg || 'Failed to fetch printers');
+					}
 
 					const printers = await response.json();
 
@@ -362,7 +365,8 @@
 			}
 
 			// Initial fetch
-			setTimeout(fetchPrinters, 800); // Small delay to show shimmer effect
+			fetchPrinters();
+			// setTimeout(fetchPrinters, 800); // Small delay to show shimmer effect
 		</script>
 	</body>
 </html>

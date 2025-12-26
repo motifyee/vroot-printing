@@ -23,7 +23,7 @@ public partial class PrintInvoiceController {
     List<PrinterInfo> printers = [];
 
     if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-      return Ok(printers);
+      return BadRequest("Printer information collection via PrinterSettings/WMI is only supported on Windows systems.");
 
 #pragma warning disable CA1416 // Validate platform compatibility
     try {
