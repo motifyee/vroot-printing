@@ -208,7 +208,7 @@ h1 {
 	padding: 2px;
 	background: repeating-conic-gradient(
 		from var(--border-angle),
-		var(--accent) 0deg 15deg,
+		#ff8c00 0deg 15deg,
 		transparent 15deg 30deg
 	);
 	-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
