@@ -107,8 +107,20 @@ function startMonitoring() {
 	eventSource = new EventSource('/Printers/Data');
 
 	eventSource.onmessage = function (event) {
+		let data;
 		try {
-			const data = JSON.parse(event.data);
+			data = JSON.parse(event.data);
+		} catch (e) {
+			console.error(
+				'Error parsing printer JSON data:',
+				e,
+				'Raw data:',
+				event.data
+			);
+			return;
+		}
+
+		try {
 			if (data.error) {
 				container.innerHTML = `
 					<div class="error-state">
@@ -120,7 +132,7 @@ function startMonitoring() {
 			}
 			updatePrinterUI(data);
 		} catch (e) {
-			console.error('Error parsing printer data', e);
+			console.error('Error updating printer UI with data:', e, data);
 		}
 	};
 

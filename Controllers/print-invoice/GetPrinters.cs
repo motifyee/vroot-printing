@@ -12,8 +12,12 @@ public partial class PrintInvoiceController {
     Response.Headers.Append("Cache-Control", "no-cache");
     Response.Headers.Append("Connection", "keep-alive");
 
+    var jsonOptions = new System.Text.Json.JsonSerializerOptions {
+      PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+    };
+
     if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-      var errorJson = System.Text.Json.JsonSerializer.Serialize(new { error = "Printer information collection is only supported on Windows systems." });
+      var errorJson = System.Text.Json.JsonSerializer.Serialize(new { error = "Printer information collection is only supported on Windows systems." }, jsonOptions);
       await Response.WriteAsync($"data: {errorJson}\n\n");
       await Response.Body.FlushAsync();
       return;
@@ -32,7 +36,7 @@ public partial class PrintInvoiceController {
     Action<List<PrinterInfo>> onPrintersChanged = async (printers) => {
       await semaphore.WaitAsync();
       try {
-        var json = System.Text.Json.JsonSerializer.Serialize(printers);
+        var json = System.Text.Json.JsonSerializer.Serialize(printers, jsonOptions);
         await Response.WriteAsync($"data: {json}\n\n");
         await Response.Body.FlushAsync();
       } catch {
@@ -47,7 +51,7 @@ public partial class PrintInvoiceController {
 
     await semaphore.WaitAsync();
     try {
-      var initialJson = System.Text.Json.JsonSerializer.Serialize(initialPrinters);
+      var initialJson = System.Text.Json.JsonSerializer.Serialize(initialPrinters, jsonOptions);
       await Response.WriteAsync($"data: {initialJson}\n\n");
       await Response.Body.FlushAsync();
     } finally {
