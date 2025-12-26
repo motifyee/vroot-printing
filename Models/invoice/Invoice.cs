@@ -72,5 +72,6 @@ namespace TemplatePrinting.Models.Invoice {
     public string? FooterNote1 { get; set; }
     public string? FooterNote2 { get; set; }
     public string? FooterNote3 { get; set; }
+    public string? LogoImage { get; set; }
   }
 }
