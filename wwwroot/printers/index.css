@@ -194,6 +194,12 @@ h1 {
 	z-index: 1;
 }
 
+@property --border-angle {
+	syntax: '<angle>';
+	inherits: false;
+	initial-value: 0deg;
+}
+
 .card.updated-highlight::after {
 	content: '';
 	position: absolute;
@@ -201,6 +207,7 @@ h1 {
 	border-radius: 14px;
 	padding: 2px;
 	background: repeating-conic-gradient(
+		from var(--border-angle),
 		var(--accent) 0deg 15deg,
 		transparent 15deg 30deg
 	);
@@ -213,11 +220,8 @@ h1 {
 }
 
 @keyframes rotate-border {
-	from {
-		transform: rotate(0deg);
-	}
 	to {
-		transform: rotate(360deg);
+		--border-angle: 360deg;
 	}
 }
 
