@@ -187,14 +187,47 @@ h1 {
 
 /* Updated Highlight & Toaster Styles */
 .card.updated-highlight {
-	border-color: var(--accent);
-	box-shadow: 0 0 20px rgba(47, 129, 247, 0.3);
+	position: relative;
+	border-color: transparent;
+	box-shadow: 0 0 20px rgba(47, 129, 247, 0.15);
 	transition: all 0.3s ease;
+	z-index: 1;
+}
+
+.card.updated-highlight::after {
+	content: '';
+	position: absolute;
+	inset: -2px;
+	border-radius: 14px;
+	padding: 2px;
+	background: repeating-conic-gradient(
+		var(--accent) 0deg 15deg,
+		transparent 15deg 30deg
+	);
+	-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	mask-composite: exclude;
+	animation: rotate-border 4s linear infinite;
+	pointer-events: none;
+}
+
+@keyframes rotate-border {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .card.updated-highlight:hover {
 	box-shadow: none;
 	border-color: var(--border);
+}
+
+.card.updated-highlight:hover::after {
+	display: none;
 }
 
 #toastContainer {
