@@ -1,25 +1,30 @@
 let eventSource = null;
+let lastPrinterState = new Map();
 
-function updatePrinterUI(printers) {
-	const container = document.getElementById('printerContainer');
+function showToast(message) {
+	const container = document.getElementById('toastContainer');
+	if (!container) return;
 
-	if (printers.length === 0) {
-		container.innerHTML = `
-			<div class="error-state">
-				<h3>No Printers Found</h3>
-				<p>No installed printers were detected on this system.</p>
-			</div>`;
-		return;
-	}
+	const toast = document.createElement('div');
+	toast.className = 'toast';
+	toast.innerHTML = `
+		<span class="toast-icon">✨</span>
+		<span>${message}</span>
+	`;
+	container.appendChild(toast);
 
-	container.innerHTML = printers
-		.map(
-			p => `
-	<div class="card" id="printer-${p.name.replace(/\s+/g, '-')}">
+	setTimeout(() => {
+		toast.classList.add('fade-out');
+		setTimeout(() => toast.remove(), 500);
+	}, 3000);
+}
+
+function createPrinterCardContent(p) {
+	return `
 		<div class="card-title">
 			<span title="${p.fullName}">${
-				p.name
-			} <span class="status-pill" style="font-size: 0.6rem; vertical-align: middle; background: rgba(63, 185, 80, 0.1); color: var(--success); margin-left: 4px; border: 1px solid rgba(63, 185, 80, 0.2);">LIVE</span></span>
+		p.name
+	} <span class="status-pill" style="font-size: 0.6rem; vertical-align: middle; background: rgba(63, 185, 80, 0.1); color: var(--success); margin-left: 4px; border: 1px solid rgba(63, 185, 80, 0.2);">LIVE</span></span>
 			<div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
 				${p.isDefault ? '<span class="status-pill status-default">Default</span>' : ''}
 				${
@@ -91,10 +96,71 @@ function updatePrinterUI(printers) {
 				}
 			</div>
 		</div>
-	</div>
-`
-		)
-		.join('');
+	`;
+}
+
+function updatePrinterUI(printers) {
+	const container = document.getElementById('printerContainer');
+
+	if (printers.length === 0) {
+		container.innerHTML = `
+			<div class="error-state">
+				<h3>No Printers Found</h3>
+				<p>No installed printers were detected on this system.</p>
+			</div>`;
+		lastPrinterState.clear();
+		return;
+	}
+
+	// Remove skeleton or error-state if present
+	if (
+		container.querySelector('.skeleton') ||
+		container.querySelector('.error-state')
+	) {
+		container.innerHTML = '';
+	}
+
+	const currentPrinterNames = new Set(printers.map(p => p.name));
+
+	// Remove printers that are gone
+	for (let name of lastPrinterState.keys()) {
+		if (!currentPrinterNames.has(name)) {
+			const id = `printer-${name.replace(/\s+/g, '-')}`;
+			const el = document.getElementById(id);
+			if (el) el.remove();
+			lastPrinterState.delete(name);
+		}
+	}
+
+	printers.forEach(p => {
+		const id = `printer-${p.name.replace(/\s+/g, '-')}`;
+		let card = document.getElementById(id);
+		const prevState = lastPrinterState.get(p.name);
+		const hasChanged =
+			prevState && JSON.stringify(prevState) !== JSON.stringify(p);
+
+		if (!card) {
+			// Fresh entry
+			const div = document.createElement('div');
+			div.id = id;
+			div.className = 'card';
+			div.innerHTML = createPrinterCardContent(p);
+			container.appendChild(div);
+		} else if (hasChanged) {
+			// Update existing content
+			card.innerHTML = createPrinterCardContent(p);
+			card.classList.add('updated-highlight');
+			showToast(`Printer "${p.name}" updated`);
+
+			const removeHighlight = () => {
+				card.classList.remove('updated-highlight');
+				card.removeEventListener('mouseenter', removeHighlight);
+			};
+			card.addEventListener('mouseenter', removeHighlight);
+		}
+
+		lastPrinterState.set(p.name, p);
+	});
 }
 
 function startMonitoring() {

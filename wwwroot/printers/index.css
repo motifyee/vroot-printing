@@ -184,3 +184,71 @@ h1 {
 	cursor: pointer;
 	font-weight: 600;
 }
+
+/* Updated Highlight & Toaster Styles */
+.card.updated-highlight {
+	border-color: var(--accent);
+	box-shadow: 0 0 20px rgba(47, 129, 247, 0.3);
+	transition: all 0.3s ease;
+}
+
+.card.updated-highlight:hover {
+	box-shadow: none;
+	border-color: var(--border);
+}
+
+#toastContainer {
+	position: fixed;
+	bottom: 2rem;
+	right: 2rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	z-index: 1000;
+}
+
+.toast {
+	background: var(--card-bg);
+	border: 1px solid var(--accent);
+	color: var(--text-main);
+	padding: 1rem 1.5rem;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+	font-size: 0.875rem;
+	font-weight: 500;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	animation: slideIn 0.3s ease-out forwards;
+	min-width: 250px;
+}
+
+@keyframes slideIn {
+	from {
+		transform: translateX(100%);
+		opacity: 0;
+	}
+	to {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+.toast.fade-out {
+	animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes fadeOut {
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+}
+
+.toast-icon {
+	color: var(--accent);
+}
