@@ -1,6 +1,5 @@
 
 using Microsoft.AspNetCore.Mvc;
-using TemplatePrinting.Models.Invoice;
 
 namespace TemplatePrinting.Controllers;
 
