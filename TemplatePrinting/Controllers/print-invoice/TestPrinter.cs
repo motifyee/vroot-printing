@@ -1,0 +1,55 @@
+
+using Microsoft.AspNetCore.Mvc;
+using PrintingLibrary.ExcelUtils;
+using PrintingLibrary.InteropUtils;
+using PrintingLibrary.SpireUtils;
+using PrintingLibrary.Setup;
+
+namespace TemplatePrinting.Controllers;
+
+public partial class PrintInvoiceController {
+
+  [HttpPost("Printers/Test")]
+  public async Task<ActionResult> TestPrinter([FromBody] TestPrinterRequest request) {
+    if (string.IsNullOrEmpty(request.PrinterName)) {
+      return BadRequest("Printer name is required");
+    }
+
+    try {
+
+      var templateFile = Path.Combine(
+        PrintingSetup.AssemblyPath,
+        "printer",
+        "templates",
+        "excel",
+        "test.xlsx"
+      );
+
+      string outputFile = GetOutputFilePath(DateTime.Now.ToString("yyyy-MM-dd"), $"TEST-{request.PrinterName}", "test");
+
+      ExcelUtils.CreateOutputExcel(outputFile, templateFile, new { request.PrinterName });
+
+      var printStampImageName = request.PrintStampImageName ?? _util.Settings.PrintStampImage;
+      var printStampHash = request.PrintStampHash ?? _util.Settings.PrintStampHash;
+      var printStampSecret = _util.PrintStampSecret;
+      ExcelUtils.AddPrintStamp(outputFile, printStampImageName, printStampHash, printStampSecret, "A10");
+
+      if (_util.Settings?.UseSpireExcelPrinter ?? false)
+        SpireUtils.PrintExcelFile(outputFile, request.PrinterName);
+      else InteropUtils.PrintExcelFile(outputFile, request.PrinterName);
+
+      _logger.LogInformation("Sending test Excel page to printer: {PrinterName}", request.PrinterName);
+
+      return Ok(new { message = $"Test page (Excel) sent to {request.PrinterName}" });
+    } catch (Exception e) {
+      _logger.LogError(e, "Error sending test page to printer {PrinterName}", request.PrinterName);
+      return StatusCode(500, new { error = e.Message });
+    }
+  }
+}
+
+public class TestPrinterRequest {
+  public string? PrinterName { get; set; }
+  public string? PrintStampImageName { get; set; }
+  public string? PrintStampHash { get; set; }
+}
