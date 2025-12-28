@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace PrintingLibrary.EmbeddedResourceUtils;
 
-public static class EmbeddedResource {
+public static class Resources {
   public static Stream? GetStream(string relativePath) {
     var assembly = Assembly.GetExecutingAssembly();
     var resourceName = $"{assembly.GetName().Name}.{relativePath.Replace('/', '.')}";

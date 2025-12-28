@@ -30,7 +30,7 @@ public partial class PrintInvoiceController {
 
       ExcelUtils.CreateOutputExcel(outputFile, templateFile, new { request.PrinterName });
 
-      ExcelUtils.AddPrintStamp(outputFile, EmbeddedResource.PrintStamp, "A10");
+      ExcelUtils.AddPrintStamp(outputFile, Resources.PrintStamp, "A10");
 
       if (_util.Settings?.UseSpireExcelPrinter ?? false)
         SpireUtils.PrintExcelFile(outputFile, request.PrinterName);

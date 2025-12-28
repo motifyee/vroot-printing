@@ -24,11 +24,10 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Assets\logo.png" />
-    <EmbeddedResource Include="Assets\template.html" />
+  <!-- <ItemGroup>
+    <EmbeddedResource Include="Assets\print_stamp.png" />
     <EmbeddedResource Include="Assets\**\*.*" />
-  </ItemGroup>
+  </ItemGroup> -->
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

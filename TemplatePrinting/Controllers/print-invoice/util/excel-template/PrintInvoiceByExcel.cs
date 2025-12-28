@@ -24,7 +24,7 @@ public partial class PrintInvoiceController {
 
     ExcelUtils.CreateOutputExcel(outputFile, templateFile, invoice);
 
-    ExcelUtils.AddPrintStamp(outputFile, EmbeddedResource.PrintStamp);
+    ExcelUtils.AddPrintStamp(outputFile, Resources.PrintStamp);
 
     if (!_hostEnv.IsProduction()) return;
 
