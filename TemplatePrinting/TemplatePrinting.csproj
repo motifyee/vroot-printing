@@ -26,6 +26,7 @@
     </Reference>
 
     <None Include="..\PrintingLibrary\lib\**\*.*">
+      <Link>lib\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

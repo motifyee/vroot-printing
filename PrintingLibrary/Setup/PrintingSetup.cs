@@ -5,7 +5,7 @@ namespace PrintingLibrary.Setup;
 public partial class PrintingSetup() : IPrintingSetup, IDisposable {
 
   // public string AssemblyPath = System.Reflection.Assembly.GetEntryAssembly()?.Location ?? Environment.CurrentDirectory;
-  public static readonly string AssemblyPath = Environment.CurrentDirectory;
+  public static readonly string AssemblyPath = AppDomain.CurrentDomain.BaseDirectory;
 
   public void Setup() {
     SpireUtils.SpireUtils.LoadSpireLicenseKey();
