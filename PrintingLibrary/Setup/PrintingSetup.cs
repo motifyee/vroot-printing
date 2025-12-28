@@ -4,8 +4,21 @@ namespace PrintingLibrary.Setup;
 
 public partial class PrintingSetup() : IPrintingSetup, IDisposable {
 
-  // public string AssemblyPath = System.Reflection.Assembly.GetEntryAssembly()?.Location ?? Environment.CurrentDirectory;
-  public static readonly string AssemblyPath = AppDomain.CurrentDomain.BaseDirectory;
+  /// <summary>
+  /// Current working directory - where the application is launched from.
+  /// Use this for: output files (printer/out), templates, and images that should be relative to the working directory.
+  /// Debug: TemplatePrinting/ (project root)
+  /// Publish: publish/ (or wherever the .exe is run from)
+  /// </summary>
+  public static readonly string AssemblyPath = Environment.CurrentDirectory;
+
+  /// <summary>
+  /// Base directory where assemblies are loaded - always points to the executable's location.
+  /// Use this for: binary dependencies in lib/ folder (printer.exe, Chrome, DLLs).
+  /// Debug: bin/Debug/net8.0/
+  /// Publish: publish/
+  /// </summary>
+  public static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
   public void Setup() {
     SpireUtils.SpireUtils.LoadSpireLicenseKey();
