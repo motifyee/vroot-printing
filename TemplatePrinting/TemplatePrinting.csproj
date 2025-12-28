@@ -18,6 +18,16 @@
     <Reference Include="Spire.XLS">
       <HintPath>..\PrintingLibrary\lib\Spire\Spire.XLS.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel">
+      <HintPath>..\PrintingLibrary\lib\interop\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="OFFICE">
+      <HintPath>..\PrintingLibrary\lib\interop\OFFICE.DLL</HintPath>
+    </Reference>
+
+    <None Include="..\PrintingLibrary\lib\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
