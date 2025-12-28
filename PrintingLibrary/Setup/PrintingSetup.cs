@@ -37,12 +37,12 @@ public partial class PrintingSetup() : IPrintingSetup, IDisposable {
 
   public PrintingSettings Settings {
     get {
-      if (!File.Exists("printing-settings.json"))
+      if (!File.Exists("lib/printing-settings.json"))
         return new PrintingSettings();
 
       try {
         PrintingSettings? settings;
-        using (StreamReader r = new("printing-settings.json"))
+        using (StreamReader r = new("lib/printing-settings.json"))
           settings = JsonConvert.DeserializeObject<PrintingSettings>(r.ReadToEnd());
 
         return settings ?? new PrintingSettings();
