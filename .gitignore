@@ -1,13 +1,13 @@
 obj/
 bin/
 
-TemplatePrinting/out/**/*.*
+TemplatePrinting/printer/out/**/*.*
 
-TemplatePrinting/templates/*.*
-!TemplatePrinting/templates/*.xlsx
-!TemplatePrinting/templates/*.html
-!TemplatePrinting/templates/*.css
-!TemplatePrinting/templates/*.ttf
+TemplatePrinting/printer/templates/*.*
+!TemplatePrinting/printer/templates/*.xlsx
+!TemplatePrinting/printer/templates/*.html
+!TemplatePrinting/printer/templates/*.css
+!TemplatePrinting/printer/templates/*.ttf
 
 PrintingLibrary/lib/chrome-headless-shell-win64
 
