@@ -4,6 +4,7 @@ using PrintingLibrary.ExcelUtils;
 using PrintingLibrary.InteropUtils;
 using PrintingLibrary.SpireUtils;
 using PrintingLibrary.Setup;
+using PrintingLibrary.EmbeddedResourceUtils;
 
 namespace TemplatePrinting.Controllers;
 
@@ -29,10 +30,7 @@ public partial class PrintInvoiceController {
 
       ExcelUtils.CreateOutputExcel(outputFile, templateFile, new { request.PrinterName });
 
-      var printStampImageName = request.PrintStampImageName ?? _util.Settings.PrintStampImage;
-      var printStampHash = request.PrintStampHash ?? _util.Settings.PrintStampHash;
-      var printStampSecret = _util.PrintStampSecret;
-      ExcelUtils.AddPrintStamp(outputFile, printStampImageName, printStampHash, printStampSecret, "A10");
+      ExcelUtils.AddPrintStamp(outputFile, EmbeddedResource.PrintStamp, "A10");
 
       if (_util.Settings?.UseSpireExcelPrinter ?? false)
         SpireUtils.PrintExcelFile(outputFile, request.PrinterName);

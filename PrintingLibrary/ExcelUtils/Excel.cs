@@ -68,4 +68,18 @@ public static class ExcelUtils {
 
     return true;
   }
+
+  public static bool AddPrintStamp(string filePath, byte[]? imageBytes, string? stampRowIndex = null) {
+    if (imageBytes == null) return false;
+
+    var _stampRowIndex = stampRowIndex ?? $"A{GetLastDataRowIndex(filePath) + 2}";
+    MiniExcel.AddPicture(filePath, new MiniExcelPicture {
+      ImageBytes = imageBytes,
+      PictureType = "image/png",
+      CellAddress = _stampRowIndex,
+      WidthPx = 320,
+    });
+
+    return true;
+  }
 }

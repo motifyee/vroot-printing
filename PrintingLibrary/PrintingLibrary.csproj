@@ -25,6 +25,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Assets\logo.png" />
+    <EmbeddedResource Include="Assets\template.html" />
+    <EmbeddedResource Include="Assets\**\*.*" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PuppeteerSharp" Version="20.0.4" />
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.10" />
