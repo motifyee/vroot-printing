@@ -22,7 +22,11 @@ public partial class PrintInvoiceController {
 
     string outputFile = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.TemplateName);
 
-    ExcelUtils.CreateOutputExcel(outputFile, templateFile, invoice);
+    // Get encryption password if encryption is enabled
+    var settings = _util.Settings;
+    string? encryptionPassword = settings.EncryptGeneratedFiles ? _util.EncryptionPassword : null;
+
+    ExcelUtils.CreateOutputExcel(outputFile, templateFile, invoice, encryptionPassword);
 
     ExcelUtils.AddPrintStamp(outputFile, _resources.GetBytes(Assets.PrintStamp));
 

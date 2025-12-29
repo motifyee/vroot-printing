@@ -60,4 +60,14 @@ public partial class PrintingSetup() : IPrintingSetup, IDisposable {
     get { return null; }
   }
 
+  /// <summary>
+  /// Encryption password for generated Excel files.
+  /// This password is compiled into the assembly and not visible in settings files.
+  /// Change this value before building for production.
+  /// </summary>
+  public string? EncryptionPassword {
+    get { return "CHANGE_THIS_SECURE_PASSWORD_BEFORE_PRODUCTION"; }
+  }
+
+
 }

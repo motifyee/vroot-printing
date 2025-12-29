@@ -21,4 +21,8 @@ public interface IPrintingSetup {
   /// Secret used to encrypt template output
   /// </summary>
   string? TemplateEncOutputSecret { get; }
+  /// <summary>
+  /// Password used to encrypt generated Excel files
+  /// </summary>
+  string? EncryptionPassword { get; }
 }

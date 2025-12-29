@@ -33,4 +33,10 @@ public class PrintingSettings {
   /// </summary>
   [JsonProperty("default_print_stamp_image_hash")]
   public string? PrintStampHash { get; set; } = null;
+
+  /// <summary>
+  /// Enable or disable encryption of generated Excel files
+  /// </summary>
+  [JsonProperty("encrypt_generated_files")]
+  public bool EncryptGeneratedFiles { get; set; } = true;
 }

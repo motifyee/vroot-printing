@@ -21,7 +21,7 @@ public static class ExcelUtils {
     return lastRowIndex;
   }
 
-  public static void CreateOutputExcel(string outputFilePath, string templateFile, object data) {
+  public static void CreateOutputExcel(string outputFilePath, string templateFile, object data, string? encryptionPassword = null) {
     _logger.LogInformation("Creating file: {outputFile} \n", outputFilePath);
 
     var config = new OpenXmlConfiguration() {
@@ -33,7 +33,19 @@ public static class ExcelUtils {
     MiniExcel.SaveAsByTemplate(outputFilePath, templateFile, data, configuration: config);
 
     _logger.LogInformation("Excel file created: {outputFile} \n", outputFilePath);
+
+    // Encrypt the file if password is provided
+    if (!string.IsNullOrEmpty(encryptionPassword)) {
+      try {
+        EncryptUtil.EncryptFileInPlace(outputFilePath, encryptionPassword);
+        _logger.LogInformation("Excel file encrypted: {outputFile} \n", outputFilePath);
+      } catch (Exception ex) {
+        _logger.LogError(ex, "Failed to encrypt Excel file: {outputFile}", outputFilePath);
+        throw;
+      }
+    }
   }
+
 
   public static bool AddPrintStamp(string filePath, string? printStampImageName, string? printStampHash, string? hashSecret, string? stampRowIndex = null) {
     if (string.IsNullOrEmpty(printStampImageName)) return false;
