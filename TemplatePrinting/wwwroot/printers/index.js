@@ -1,14 +1,18 @@
 let eventSource = null;
 let lastPrinterState = new Map();
 
-function showToast(message) {
+function showToast(message, type = 'info') {
 	const container = document.getElementById('toastContainer');
 	if (!container) return;
 
+	let icon = '✨';
+	if (type === 'success') icon = '✅';
+	if (type === 'error') icon = '❌';
+
 	const toast = document.createElement('div');
-	toast.className = 'toast';
+	toast.className = `toast ${type}`;
 	toast.innerHTML = `
-		<span class="toast-icon">✨</span>
+		<span class="toast-icon">${icon}</span>
 		<span>${message}</span>
 	`;
 	container.appendChild(toast);
@@ -51,12 +55,12 @@ function createPrinterCardContent(p) {
 			</div>
 		</div>
 
-		<div class="spec-grid">
+		<div class="spec-grid jobs-container">
 			<div class="spec-item">
 				<span class="spec-label">Driver</span>
 				<span class="spec-value">${p.driverName || 'Generic'}</span>
 			</div>
-			<div class="spec-item">
+			<div class="spec-item printable-jobs">
 				<span class="spec-label">Jobs</span>
 				<span class="spec-value" style="${
 					p.jobCount > 0 ? 'color: var(--accent); font-weight: 700;' : ''
@@ -85,17 +89,36 @@ function createPrinterCardContent(p) {
 		<div class="tag-container" style="margin-bottom: 1.25rem;">
 			<span class="spec-label">Capabilities</span>
 			<div class="tags">
-				${p.paperSizes
-					.slice(0, 5)
-					.map(size => `<span class="tag">${size}</span>`)
-					.join('')}
-				${
-					p.paperSizes.length > 5
-						? `<span class="tag" title="${p.paperSizes
-								.slice(5)
-								.join(', ')}">+ ${p.paperSizes.length - 5} more</span>`
-						: ''
-				}
+				${(() => {
+					const defaultSize = p.defaultPaperSize;
+					const otherSizes = p.paperSizes.filter(
+						s => s.name !== defaultSize?.name
+					);
+					const sortedSizes = defaultSize
+						? [
+								{ ...defaultSize, isDefault: true },
+								...otherSizes.map(s => ({ ...s, isDefault: false })),
+						  ]
+						: otherSizes.map(s => ({ ...s, isDefault: false }));
+
+					return (
+						sortedSizes
+							.slice(0, 5)
+							.map(size => {
+								const dims = `<span style="font-size: 0.65rem; opacity: 0.7; margin-left: 4px;">(${size.width}x${size.height})</span>`;
+								return size.isDefault
+									? `<span class="tag tag-default"><span class="tag-default-label">DEFAULT</span> ${size.name}${dims}</span>`
+									: `<span class="tag">${size.name}${dims}</span>`;
+							})
+							.join('') +
+						(sortedSizes.length > 5
+							? `<span class="tag" title="${sortedSizes
+									.slice(5)
+									.map(s => `${s.name} (${s.width}x${s.height})`)
+									.join(', ')}">+ ${sortedSizes.length - 5} more</span>`
+							: '')
+					);
+				})()}
 			</div>
 		</div>
 
@@ -104,7 +127,7 @@ function createPrinterCardContent(p) {
 			"\\'"
 		)}', this)">
 			<div class="spinner"></div>
-			<span class="btn-text">Test Paper</span>
+			<span class="btn-text">Test</span>
 		</button>
 	`;
 }
@@ -127,13 +150,13 @@ async function testPrinter(printerName, btn) {
 		const result = await response.json();
 
 		if (response.ok) {
-			showToast(`✨ ${result.message}`);
+			showToast(result.message);
 		} else {
-			showToast(`❌ Error: ${result.error || 'Failed to print test page'}`);
+			showToast(result.error || 'Failed to print test page', 'error');
 		}
 	} catch (err) {
 		console.error('Test print failed:', err);
-		showToast('❌ Connection error. Failed to reach the server.');
+		showToast('Connection error. Failed to reach the server.', 'error');
 	} finally {
 		btn.classList.remove('loading');
 		btn.disabled = false;
@@ -185,19 +208,30 @@ function updatePrinterUI(printers) {
 			const div = document.createElement('div');
 			div.id = id;
 			div.className = 'card';
+			if (p.jobCount > 0) div.classList.add('updated-highlight');
 			div.innerHTML = createPrinterCardContent(p);
 			container.appendChild(div);
 		} else if (hasChanged) {
 			// Update existing content
 			card.innerHTML = createPrinterCardContent(p);
-			card.classList.add('updated-highlight');
-			showToast(`Printer "${p.name}" updated`);
 
-			const removeHighlight = () => {
+			if (p.jobCount > 0) {
+				card.classList.add('updated-highlight');
+				showToast(`Printer "${p.name}" updated (Active Jobs: ${p.jobCount})`);
+
+				const removeHighlight = () => {
+					card.classList.remove('updated-highlight');
+					card.removeEventListener('mouseenter', removeHighlight);
+				};
+				card.addEventListener('mouseenter', removeHighlight);
+			} else {
 				card.classList.remove('updated-highlight');
-				card.removeEventListener('mouseenter', removeHighlight);
-			};
-			card.addEventListener('mouseenter', removeHighlight);
+				if (prevState && prevState.jobCount > 0) {
+					showToast(`Printer "${p.name}" jobs cleared`);
+				} else {
+					showToast(`Printer "${p.name}" updated`);
+				}
+			}
 		}
 
 		lastPrinterState.set(p.name, p);
@@ -233,6 +267,7 @@ function startMonitoring() {
 					<div class="error-state">
 						<h3 style="color: var(--error)">System Limitation</h3>
 						<p>${data.error}</p>
+						<button class="btn-retry" style="background: var(--text-dim); margin-top: 1rem;" onclick="loadDummyData()">Try Dummy Data</button>
 					</div>`;
 				eventSource.close();
 				return;
@@ -249,11 +284,93 @@ function startMonitoring() {
 			<div class="error-state">
 				<h3 style="color: var(--error)">Connection Lost</h3>
 				<p>Real-time monitoring interrupted. Attempting to reconnect...</p>
-				<button class="btn-retry" onclick="startMonitoring()">Reconnect Now</button>
+				<div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+					<button class="btn-retry" onclick="startMonitoring()">Reconnect Now</button>
+					<button class="btn-retry" style="background: var(--text-dim);" onclick="loadDummyData()">Try Dummy Data</button>
+				</div>
 			</div>`;
 		eventSource.close();
 	};
 }
 
+async function loadDummyData() {
+	try {
+		const response = await fetch('/Printers/Dummy');
+		const data = await response.json();
+		updatePrinterUI(data);
+		showToast('Loaded dummy printer data for preview');
+	} catch (err) {
+		console.error('Failed to load dummy data:', err);
+		showToast('Failed to load dummy data', 'error');
+	}
+}
+
+function initViewToggle() {
+	const container = document.getElementById('printerContainer');
+	const toggle = document.getElementById('viewToggle');
+	if (!toggle || !container) return;
+
+	const buttons = toggle.querySelectorAll('.toggle-btn');
+
+	// Load saved preference
+	const savedView = localStorage.getItem('vroot-printer-view') || 'compact';
+	setView(savedView);
+
+	buttons.forEach(btn => {
+		btn.addEventListener('click', () => {
+			const view = btn.dataset.view;
+			setView(view);
+		});
+	});
+
+	function setView(view) {
+		if (view === 'compact') {
+			container.classList.add('compact-mode');
+		} else {
+			container.classList.remove('compact-mode');
+		}
+
+		buttons.forEach(b => {
+			b.classList.toggle('active', b.dataset.view === view);
+		});
+
+		localStorage.setItem('vroot-printer-view', view);
+	}
+}
+
+function initThemeToggle() {
+	const toggle = document.getElementById('themeToggle');
+	if (!toggle) return;
+
+	const buttons = toggle.querySelectorAll('.toggle-btn');
+
+	// Load saved preference
+	const savedTheme = localStorage.getItem('vroot-printer-theme') || 'light';
+	setTheme(savedTheme);
+
+	buttons.forEach(btn => {
+		btn.addEventListener('click', () => {
+			const theme = btn.dataset.theme;
+			setTheme(theme);
+		});
+	});
+
+	function setTheme(theme) {
+		if (theme === 'light') {
+			document.body.classList.add('light-theme');
+		} else {
+			document.body.classList.remove('light-theme');
+		}
+
+		buttons.forEach(b => {
+			b.classList.toggle('active', b.dataset.theme === theme);
+		});
+
+		localStorage.setItem('vroot-printer-theme', theme);
+	}
+}
+
 // Initial start
+initThemeToggle();
+initViewToggle();
 startMonitoring();
