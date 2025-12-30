@@ -1,7 +1,11 @@
 @echo off
+
+set PORT=444
+set FOLDER=publishN
+
 if not exist _start_server.cmd (
-    cd publish
+    cd %FOLDER%
 )
-echo Calling _start_server.cmd with port 444...
-call _start_server.cmd 444
+echo Calling _start_server.cmd with port %PORT%...
+call _start_server.cmd %PORT%
 pause
