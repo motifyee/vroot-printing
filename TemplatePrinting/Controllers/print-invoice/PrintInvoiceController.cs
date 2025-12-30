@@ -62,4 +62,27 @@ public partial class PrintInvoiceController(
 
     System.IO.File.WriteAllText(outputFile, json);
   }
+
+  private Assets GetPrintStampAsset(string? printerName) {
+    var stampAsset = Assets.PrintStamp;
+    if (string.IsNullOrEmpty(printerName)) return stampAsset;
+
+    try {
+      var printerSettings = new System.Drawing.Printing.PrinterSettings { PrinterName = printerName };
+      if (!printerSettings.IsValid) return stampAsset;
+
+      // width unit is in 1/1000 of an inch = 0.254mm
+      // 1mm = 3.7795275591px
+      var width = printerSettings.DefaultPageSettings.PaperSize.Width;
+      // 80mm is ~315 units, 72mm is ~283 units. Using 290 as threshold.
+      if (width > 0 && width <= 290) {
+        stampAsset = Assets.PrintStamp72;
+        _logger.LogInformation("Selected 72mm stamp for printer {PrinterName} (Width: {Width})", printerName, width);
+      }
+    } catch (Exception ex) {
+      _logger.LogWarning(ex, "Failed to determine printer width for {PrinterName}, defaulting to 80mm stamp", printerName);
+    }
+
+    return stampAsset;
+  }
 }

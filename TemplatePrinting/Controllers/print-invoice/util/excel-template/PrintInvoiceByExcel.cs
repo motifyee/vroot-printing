@@ -27,7 +27,9 @@ public partial class PrintInvoiceController {
 
     ExcelUtils.CreateOutputExcel(outputFile, templateFile, invoice, encryptionPassword);
 
-    ExcelUtils.AddPrintStamp(outputFile, _resources.GetBytes(Assets.PrintStamp), encryptionPassword);
+    var stampAsset = GetPrintStampAsset(invoice.PrinterName);
+
+    ExcelUtils.AddPrintStamp(outputFile, _resources.GetBytes(stampAsset), encryptionPassword);
 
     if (!_hostEnv.IsProduction()) return;
 

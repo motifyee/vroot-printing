@@ -5,5 +5,8 @@ namespace TemplatePrinting.Models;
 
 public enum Assets {
   [Display(Name = "Assets/print_stamp.png")]
-  PrintStamp
+  PrintStamp,
+
+  [Display(Name = "Assets/print_stamp_72.png")]
+  PrintStamp72
 }
