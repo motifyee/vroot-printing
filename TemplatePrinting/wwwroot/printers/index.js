@@ -103,7 +103,7 @@ function createPrinterCardContent(p) {
 							.map(size => {
 								const dims = `<span style="font-size: 0.65rem; opacity: 0.7; margin-left: 4px;">(${size.width}x${size.height})</span>`;
 								return size.isDefault
-									? `<span class="tag tag-default"><span class="tag-default-label">DEF</span> ${size.name}${dims}</span>`
+									? `<span class="tag tag-default"><span class="tag-default-label">DEFAULT</span> ${size.name}${dims}</span>`
 									: `<span class="tag">${size.name}${dims}</span>`;
 							})
 							.join('') +
@@ -204,19 +204,30 @@ function updatePrinterUI(printers) {
 			const div = document.createElement('div');
 			div.id = id;
 			div.className = 'card';
+			if (p.jobCount > 0) div.classList.add('updated-highlight');
 			div.innerHTML = createPrinterCardContent(p);
 			container.appendChild(div);
 		} else if (hasChanged) {
 			// Update existing content
 			card.innerHTML = createPrinterCardContent(p);
-			card.classList.add('updated-highlight');
-			showToast(`Printer "${p.name}" updated`);
 
-			const removeHighlight = () => {
+			if (p.jobCount > 0) {
+				card.classList.add('updated-highlight');
+				showToast(`Printer "${p.name}" updated (Active Jobs: ${p.jobCount})`);
+
+				const removeHighlight = () => {
+					card.classList.remove('updated-highlight');
+					card.removeEventListener('mouseenter', removeHighlight);
+				};
+				card.addEventListener('mouseenter', removeHighlight);
+			} else {
 				card.classList.remove('updated-highlight');
-				card.removeEventListener('mouseenter', removeHighlight);
-			};
-			card.addEventListener('mouseenter', removeHighlight);
+				if (prevState && prevState.jobCount > 0) {
+					showToast(`Printer "${p.name}" jobs cleared`);
+				} else {
+					showToast(`Printer "${p.name}" updated`);
+				}
+			}
 		}
 
 		lastPrinterState.set(p.name, p);
@@ -252,6 +263,7 @@ function startMonitoring() {
 					<div class="error-state">
 						<h3 style="color: var(--error)">System Limitation</h3>
 						<p>${data.error}</p>
+						<button class="btn-retry" style="background: var(--text-dim); margin-top: 1rem;" onclick="loadDummyData()">Try Dummy Data</button>
 					</div>`;
 				eventSource.close();
 				return;
@@ -268,10 +280,25 @@ function startMonitoring() {
 			<div class="error-state">
 				<h3 style="color: var(--error)">Connection Lost</h3>
 				<p>Real-time monitoring interrupted. Attempting to reconnect...</p>
-				<button class="btn-retry" onclick="startMonitoring()">Reconnect Now</button>
+				<div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+					<button class="btn-retry" onclick="startMonitoring()">Reconnect Now</button>
+					<button class="btn-retry" style="background: var(--text-dim);" onclick="loadDummyData()">Try Dummy Data</button>
+				</div>
 			</div>`;
 		eventSource.close();
 	};
+}
+
+async function loadDummyData() {
+	try {
+		const response = await fetch('/Printers/Dummy');
+		const data = await response.json();
+		updatePrinterUI(data);
+		showToast('✨ Loaded dummy printer data for preview');
+	} catch (err) {
+		console.error('Failed to load dummy data:', err);
+		showToast('❌ Failed to load dummy data');
+	}
 }
 
 // Initial start
