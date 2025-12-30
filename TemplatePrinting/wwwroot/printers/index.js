@@ -1,14 +1,18 @@
 let eventSource = null;
 let lastPrinterState = new Map();
 
-function showToast(message) {
+function showToast(message, type = 'info') {
 	const container = document.getElementById('toastContainer');
 	if (!container) return;
 
+	let icon = '✨';
+	if (type === 'success') icon = '✅';
+	if (type === 'error') icon = '❌';
+
 	const toast = document.createElement('div');
-	toast.className = 'toast';
+	toast.className = `toast ${type}`;
 	toast.innerHTML = `
-		<span class="toast-icon">✨</span>
+		<span class="toast-icon">${icon}</span>
 		<span>${message}</span>
 	`;
 	container.appendChild(toast);
@@ -146,13 +150,13 @@ async function testPrinter(printerName, btn) {
 		const result = await response.json();
 
 		if (response.ok) {
-			showToast(`✨ ${result.message}`);
+			showToast(result.message);
 		} else {
-			showToast(`❌ Error: ${result.error || 'Failed to print test page'}`);
+			showToast(result.error || 'Failed to print test page', 'error');
 		}
 	} catch (err) {
 		console.error('Test print failed:', err);
-		showToast('❌ Connection error. Failed to reach the server.');
+		showToast('Connection error. Failed to reach the server.', 'error');
 	} finally {
 		btn.classList.remove('loading');
 		btn.disabled = false;
@@ -294,10 +298,10 @@ async function loadDummyData() {
 		const response = await fetch('/Printers/Dummy');
 		const data = await response.json();
 		updatePrinterUI(data);
-		showToast('✨ Loaded dummy printer data for preview');
+		showToast('Loaded dummy printer data for preview');
 	} catch (err) {
 		console.error('Failed to load dummy data:', err);
-		showToast('❌ Failed to load dummy data');
+		showToast('Failed to load dummy data', 'error');
 	}
 }
 

@@ -11,20 +11,23 @@ namespace TemplatePrinting.Controllers;
 [Route("")]
 public partial class PrintInvoiceController(
     ILogger<PrintInvoiceController> logger,
-    IHostEnvironment hostEnvironment,
+    IWebHostEnvironment hostEnvironment,
     IPrintingSetup util,
     Resources<Assets> resources
 ) : ControllerBase {
   private readonly ILogger<PrintInvoiceController> _logger = logger;
-  private readonly IHostEnvironment _hostEnv = hostEnvironment;
+  private readonly IWebHostEnvironment _hostEnv = hostEnvironment;
   private readonly IPrintingSetup _util = util;
   private readonly Resources<Assets> _resources = resources;
 
-  [HttpGet("PrintingData", Name = "TestPrintingData")]
-  public dynamic TestPrintingData() {
-    return Ok("Printing Data Api Works!");
+  [HttpGet("", Name = "Index")]
+  public IActionResult Index() {
+    var filePath = Path.Combine(_hostEnv.WebRootPath, "printers/index.html");
+    if (!System.IO.File.Exists(filePath)) return NotFound("Dashboard not found");
+    return PhysicalFile(filePath, "text/html");
   }
 
+  [HttpPost("", Name = "PrintInvoice")]
   [HttpPost("PrintingData", Name = "PostPrintingData")]
   public async Task<ActionResult> PrintInvoice([FromBody] Invoice invoice) {
     var settings = _util.Settings;

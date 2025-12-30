@@ -315,7 +315,7 @@ h1 {
 
 .toast {
 	background: var(--card-bg);
-	border: 1px solid var(--accent);
+	border: 1px solid var(--border);
 	color: var(--text-main);
 	padding: 1rem 1.5rem;
 	border-radius: 8px;
@@ -327,6 +327,27 @@ h1 {
 	gap: 0.75rem;
 	animation: slideIn 0.3s ease-out forwards;
 	min-width: 250px;
+}
+
+.toast.success {
+	border-color: var(--success);
+}
+.toast.success .toast-icon {
+	color: var(--success);
+}
+
+.toast.error {
+	border-color: var(--error);
+}
+.toast.error .toast-icon {
+	color: var(--error);
+}
+
+.toast.info {
+	border-color: var(--accent);
+}
+.toast.info .toast-icon {
+	color: var(--accent);
 }
 
 @keyframes slideIn {
@@ -356,5 +377,6 @@ h1 {
 }
 
 .toast-icon {
-	color: var(--accent);
+	/* Default icon color if not specified */
+	color: var(--text-dim);
 }
