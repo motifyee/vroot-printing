@@ -149,9 +149,6 @@ async function decryptFile() {
 
 // Preview Excel using Syncfusion Spreadsheet
 async function previewExcelWithSyncfusion(blob) {
-	// Create a File object from the blob
-	const file = new File([blob], decryptedFileName, { type: blob.type });
-
 	// Clear existing instance if any
 	if (spreadsheetInstance) {
 		spreadsheetInstance.destroy();
@@ -161,27 +158,58 @@ async function previewExcelWithSyncfusion(blob) {
 
 	// Initialize Syncfusion Spreadsheet
 	spreadsheetInstance = new ej.spreadsheet.Spreadsheet({
-		allowOpen: true,
-		allowSave: true,
 		showRibbon: false,
 		showFormulaBar: true,
-		openUrl:
-			'https://document.syncfusion.com/web-services/spreadsheet-editor/api/spreadsheet/open',
-		saveUrl:
-			'https://document.syncfusion.com/web-services/spreadsheet-editor/api/spreadsheet/save',
-		created: () => {
+		allowOpen: true,
+		allowSave: false,
+		allowEditing: false,
+		// openUrl: 'https://document.syncfusion.com/web-services/spreadsheet-editor/api/spreadsheet/open',
+		// saveUrl: 'https://document.syncfusion.com/web-services/spreadsheet-editor/api/spreadsheet/save',
+		created: async () => {
 			// Load the file once the component is created
-			spreadsheetInstance.open({ file: file });
+			// spreadsheetInstance.open({ file: file });
+
+			try {
+				// Send the decrypted blob to our local endpoint to get JSON data
+				const formData = new FormData();
+				// Create a File object from the blob to ensure filename is passed
+				const file = new File([blob], decryptedFileName, { type: blob.type });
+				formData.append('file', file);
+
+				const response = await fetch('/decrypt-excel/open', {
+					method: 'POST',
+					body: formData,
+				});
+
+				if (response.ok) {
+					const data = await response.json();
+					// Load the JSON data into spreadsheet using openFromJson
+					await spreadsheetInstance.openFromJson({ file: data });
+
+					// Show preview card and expand container
+					previewCard.style.display = 'block';
+					container.classList.add('expanded');
+					previewCard.scrollIntoView({ behavior: 'smooth' });
+					setTimeout(() => spreadsheetInstance.goTo('A2'), 100);
+				} else {
+					const errorData = await response.json();
+					showMessage(
+						`❌ Error loading preview: ${errorData.error || 'Unknown error'}`,
+						'error'
+					);
+				}
+			} catch (error) {
+				console.error('Error fetching JSON for spreadsheet:', error);
+				showMessage(
+					'❌ Failed to load the preview. Please try again.',
+					'error'
+				);
+			}
 		},
 	});
 
 	// Render initialized Spreadsheet component
 	spreadsheetInstance.appendTo('#spreadsheet');
-
-	// Show preview card and expand container
-	previewCard.style.display = 'block';
-	container.classList.add('expanded');
-	previewCard.scrollIntoView({ behavior: 'smooth' });
 }
 
 // Download button handler

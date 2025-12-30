@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Spire.Pdf">
       <HintPath>lib/Spire/Spire.Pdf.dll</HintPath>
       <Private>True</Private>
@@ -18,6 +22,40 @@
       <HintPath>lib/Spire/Spire.XLS.dll</HintPath>
       <Private>True</Private>
     </Reference>
+
+    <Reference Include="Syncfusion.EJ2.Spreadsheet">
+      <HintPath>lib/Syncfusion/Syncfusion.EJ2.Spreadsheet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Syncfusion.Licensing">
+      <HintPath>lib/Syncfusion/Syncfusion.Licensing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Syncfusion.EJ2">
+      <HintPath>lib/Syncfusion/Syncfusion.EJ2.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Syncfusion.Compression.Portable">
+      <HintPath>lib/Syncfusion/Syncfusion.Compression.Portable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+
+    <!-- <Reference Include="Syncfusion.EJ2.XlsIO.Portable">
+      <HintPath>lib\Syncfusion\Syncfusion.EJ2.XlsIO.Portable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Syncfusion.EJ2.XlsIORenderer.Portable">
+      <HintPath>lib\Syncfusion\Syncfusion.EJ2.XlsIORenderer.Portable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Syncfusion.EJ2.MetafileRenderer.Portable">
+      <HintPath>lib\Syncfusion\Syncfusion.EJ2.MetafileRenderer.Portable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Syncfusion.EJ2.SkiaSharpHelper.Portable">
+      <HintPath>lib\Syncfusion\Syncfusion.EJ2.SkiaSharpHelper.Portable.dll</HintPath>
+      <Private>True</Private>
+    </Reference> -->
 
     <None Include="lib/**/*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
