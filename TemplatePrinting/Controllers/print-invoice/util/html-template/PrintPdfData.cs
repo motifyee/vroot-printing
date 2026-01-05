@@ -11,9 +11,10 @@ public partial class PrintInvoiceController
   private void PrintPdfData(Invoice invoice, byte[] data)
   {
     string printerName = "Microsoft Print to PDF"; // invoice.PrinterName;
-    SpireUtil.PrintPdf(data, printerName);
+    string? password = util.EncryptionPassword;
+    SpireUtil.PrintPdf(data, password: password, printerName: printerName);
 
     var outputFilePath = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.TemplateName, "pdf");
-    SpireUtil.SavePdf(data, outputFilePath);
+    SpireUtil.SavePdf(data, outputFilePath, password: password);
   }
 }

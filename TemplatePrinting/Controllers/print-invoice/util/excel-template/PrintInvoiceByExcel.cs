@@ -1,10 +1,10 @@
 
 using PrintingLibrary.ExcelUtils;
+using PrintingLibrary.EncryptUtils;
 using PrintingLibrary.InteropUtils;
 using PrintingLibrary.SpireUtils;
 using PrintingLibrary.Setup;
 using TemplatePrinting.Models.Invoice;
-using TemplatePrinting.Models;
 
 namespace TemplatePrinting.Controllers;
 
@@ -20,28 +20,35 @@ public partial class PrintInvoiceController {
         $"{invoice!.TemplateName ?? ""}.xlsx"
     );
 
-    string outputFile = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.TemplateName);
+    string outPath = GetOutputFilePath(invoice.Date, invoice.InvoiceNo, invoice.TemplateName);
+
+    var outBytes = ExcelUtils.CreateOutputExcel(templateFile, invoice);
+
+    var (asset, info) = GetPrintStampAssetAndInfo(invoice.PrinterName);
+    if (info != null) {
+      ExcelUtils.AddPrintStamp(
+        fileStream: outBytes,
+        imageBytes: resources.GetBytes(asset),
+        width: info.Width,
+        height: info.Height
+      );
+    }
 
     // Get encryption password if encryption is enabled
     string? encryptionPassword = util.EncryptionPassword;
 
-    ExcelUtils.CreateOutputExcel(outputFile, templateFile, invoice, encryptionPassword);
-
-    var (asset, info) = GetPrintStampAssetAndInfo(invoice.PrinterName);
-    if (info == null) return;
-
-    ExcelUtils.AddPrintStamp(
-      filePath: outputFile,
-      imageBytes: resources.GetBytes(asset),
-      width: info.Width,
-      height: info.Height,
-      encryptionPassword: encryptionPassword
-    );
+    outBytes.Seek(0, SeekOrigin.Begin);
+    if (!string.IsNullOrEmpty(encryptionPassword)) {
+      EncryptUtil.EncryptStreamToFile(outBytes, outPath, encryptionPassword);
+    } else {
+      using var fs = new FileStream(outPath, FileMode.Create, FileAccess.Write);
+      outBytes.CopyTo(fs);
+    }
 
     if (!hostEnvironment.IsProduction()) return;
 
     if (useSpirePrinter)
-      SpireUtils.PrintExcelFile(outputFile, invoice.PrinterName);
-    else InteropUtils.PrintExcelFile(outputFile, invoice.PrinterName);
+      SpireUtils.PrintExcelFile(outBytes, invoice.PrinterName, encryptionPassword);
+    else InteropUtils.PrintExcelFile(outBytes, invoice.PrinterName);
   }
 }

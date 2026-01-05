@@ -25,41 +25,48 @@ public static class SpireUtils {
     Console.WriteLine("Spire license loaded");
   }
 
-  public static void PrintExcelFile(string filePath, string? printerName) {
+  public static void PrintExcelFile(string filePath, string? printerName, string? password = null) {
     if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
 
     var workbook = new Workbook();
 
-    _logger.LogInformation("printing using Spire.XLS");
+    _logger.LogInformation("printing using Spire.XLS: {file}", filePath);
     var timer = new PerfTimer("time to load excel file");
+
+    if (password != null)
+      workbook.OpenPassword = password;
+
     workbook.LoadFromFile(filePath);
 
-    // var sheet = workbook.Worksheets[0];
+    timer.Print("time to print");
+    PrintWorkbook(workbook, printerName);
+    timer.End();
+  }
 
-    if (printerName != null)
-      workbook.PrintDocument.PrinterSettings.PrinterName = printerName; // "Microsoft Print to PDF";
+  public static void PrintExcelFile(Stream stream, string? printerName, string? password = null) {
+    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
 
-    // workbook.PrintDocument.PrinterSettings.FromPage = 1;
-    // workbook.PrintDocument.PrinterSettings.ToPage = 1;
-    workbook.PrintDocument.PrinterSettings.PrintRange = PrintRange.Selection;
-    // workbook.PrintDocument.PrinterSettings.DefaultPageSettings.PaperSource.RawKind = (int)PaperSourceKind.Custom;
+    var workbook = new Workbook();
 
-    // var x = workbook.PrintDocument.PrinterSettings.DefaultPageSettings.PaperSource.SourceName;
-    // sheet.PageSetup.PaperSize = PaperSizeType.Custom; // new PaperSize(3.14961M, 10);
-    // sheet.PageSetup.SetCustomPaperSize(3150, 100);
-    // sheet.PageSetup.IsFitToPage = true;
-    // sheet.PageSetup.FitToPagesWide = 1;
+    _logger.LogInformation("printing using Spire.XLS from stream");
+    var timer = new PerfTimer("time to load excel stream");
 
-    // workbook.PrintDocument.PrintController = new StandardPrintController();
-    // var paperSize = new PaperSize("Custom", 3150, 100) { RawKind = (int)PaperKind.Custom };
-    // workbook.PrintDocument.DefaultPageSettings.PaperSize = paperSize;
+    if (password != null)
+      workbook.OpenPassword = password;
 
-    // workbook.PrintDocument.PrinterSettings.PrintToFile = true;
-    // workbook.PrintDocument.PrinterSettings.PrintFileName = "InvoiceTemplate.pdf";
+    workbook.LoadFromStream(stream);
 
     timer.Print("time to print");
+    PrintWorkbook(workbook, printerName);
+    timer.End();
+  }
+
+  private static void PrintWorkbook(Workbook workbook, string? printerName) {
+    if (printerName != null)
+      workbook.PrintDocument.PrinterSettings.PrinterName = printerName;
+
+    workbook.PrintDocument.PrinterSettings.PrintRange = PrintRange.Selection;
 
     workbook.PrintDocument.Print();
-    timer.End();
   }
 }

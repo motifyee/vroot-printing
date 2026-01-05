@@ -19,6 +19,11 @@ public static class EncryptUtil {
     if (!File.Exists(inputPath))
       throw new FileNotFoundException("Input file not found", inputPath);
 
+    using var inputStream = new FileStream(inputPath, FileMode.Open, FileAccess.Read);
+    EncryptStreamToFile(inputStream, outputPath, password);
+  }
+
+  public static void EncryptStreamToFile(Stream inputStream, string outputPath, string password) {
     if (string.IsNullOrEmpty(password))
       throw new ArgumentException("Password cannot be empty", nameof(password));
 
@@ -30,8 +35,15 @@ public static class EncryptUtil {
     using var keyDerivation = new Rfc2898DeriveBytes(password, salt, Iterations, HashAlgorithmName.SHA256);
     byte[] key = keyDerivation.GetBytes(KeySize);
 
-    // Read input file
-    byte[] plainBytes = File.ReadAllBytes(inputPath);
+    // Read input stream
+    byte[] plainBytes;
+    if (inputStream is MemoryStream ms) {
+      plainBytes = ms.ToArray();
+    } else {
+      using var tempMs = new MemoryStream();
+      inputStream.CopyTo(tempMs);
+      plainBytes = tempMs.ToArray();
+    }
 
     // Encrypt the data
     using var aes = Aes.Create();

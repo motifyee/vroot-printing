@@ -9,10 +9,13 @@ namespace PrintingLibrary.SpireUtils;
 public static class SpireUtil
 {
 
-  public static void PrintPdf(byte[] data, string? printerName = null, int width = 315, int height = 10000)
+  public static void PrintPdf(byte[] data, string? password = null, string? printerName = null, int width = 315, int height = 10000)
   {
     var pdf = new PdfDocument();
-    pdf.LoadFromBytes(data);
+    if (password != null)
+      pdf.LoadFromBytes(data, password);
+    else
+      pdf.LoadFromBytes(data);
 
     if (printerName != null)
     {
@@ -36,10 +39,14 @@ public static class SpireUtil
     pdf.Print();
   }
 
-  public static void SavePdf(byte[] data, string filePath)
+  public static void SavePdf(byte[] data, string filePath, string? password = null)
   {
     var pdf = new PdfDocument();
-    pdf.LoadFromBytes(data);
+    if (password != null)
+      pdf.LoadFromBytes(data, password);
+    else
+      pdf.LoadFromBytes(data);
+
     pdf.SaveToFile(filePath, FileFormat.PDF);
   }
 }

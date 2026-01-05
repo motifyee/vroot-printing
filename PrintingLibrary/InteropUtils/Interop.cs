@@ -44,4 +44,19 @@ public static class InteropUtils {
     return result;
   }
 
+  public static string PrintExcelFile(Stream stream, string? printerName) {
+    var tempFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".xlsx");
+    try {
+      using (var fileStream = File.OpenWrite(tempFilePath)) {
+        if (stream.CanSeek) stream.Seek(0, SeekOrigin.Begin);
+        stream.CopyTo(fileStream);
+      }
+      return PrintExcelFile(tempFilePath, printerName);
+    } finally {
+      if (File.Exists(tempFilePath)) {
+        File.Delete(tempFilePath);
+      }
+    }
+  }
+
 }
