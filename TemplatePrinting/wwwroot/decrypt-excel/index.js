@@ -185,12 +185,17 @@ async function previewExcelWithSyncfusion(blob) {
 
 				if (response.ok) {
 					const data = await response.json();
-					// Load the JSON data into spreadsheet using openFromJson
-					await spreadsheetInstance.openFromJson({ file: data });
 
 					// Show preview card and expand container
 					previewCard.style.display = 'block';
 					container.classList.add('expanded');
+
+					// Force layout update to ensure correct rendering dimensions
+					spreadsheetInstance.resize();
+
+					// Load the JSON data into spreadsheet using openFromJson
+					await spreadsheetInstance.openFromJson({ file: data });
+
 					previewCard.scrollIntoView({ behavior: 'smooth' });
 					setTimeout(() => spreadsheetInstance.goTo('A2'), 100);
 				} else {
