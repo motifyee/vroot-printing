@@ -19,8 +19,10 @@ let decryptedBlob = null;
 let decryptedFileName = '';
 
 // File upload via click
+
 uploadArea.addEventListener('click', e => {
-	if (e.target !== fileInput) {
+	// Ignore if clicking the input itself or the label (label triggers input natively)
+	if (e.target !== fileInput && !e.target.closest('label')) {
 		fileInput.click();
 	}
 });
